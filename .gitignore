@@ -1,0 +1,10 @@
+node_modules
+.vercel
+.env
+.env.local
+.DS_Store
+*.log
+user_plug_ref.png
+user_wrizz_ref.png
+compare-plug.html
+compare-wrizz.html

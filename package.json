@@ -1,0 +1,11 @@
+{
+  "name": "clip-syndicate-studio",
+  "version": "1.0.0",
+  "description": "Clip Syndicate - Dark Psychology Studio",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {}
+}
