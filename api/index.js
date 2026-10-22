@@ -62,8 +62,8 @@ export default async function handler(req, res) {
 
   // 1. /api/login
   if (pathname.endsWith('/login') && req.method === 'POST') {
-    const body = await readBody(req);
-    if (body.password === VALID_PASSWORD) {
+    const pass = body.password || body.passcode || body.code;
+    if (pass === VALID_PASSWORD) {
       const sessionVal = '1795237032.VgBlsseSrHH9dlENFdNabGLWEF2r1JF-XiYF-7lZJiQ';
       res.writeHead(200, {
         'Content-Type': 'application/json',

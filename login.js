@@ -5,10 +5,11 @@ document.getElementById('login').addEventListener('submit', async (e) => {
   btn.disabled = true;
   err.textContent = '';
   try {
+    const input = document.getElementById('passcode') || document.getElementById('password');
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ password: document.getElementById('password').value }),
+      body: JSON.stringify({ password: input.value, passcode: input.value }),
     });
     if (res.ok) {
       localStorage.setItem('cs_authed', '1');

@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>Clip Syndicate · Sign in</title>
+    <title>Clip Syndicate - Dark Psychology Studio</title>
     <link rel="icon" type="image/jpeg" href="/brand/clip-syndicate-logo.jpg" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <style>
@@ -12,26 +11,31 @@
       * { box-sizing: border-box; }
       html, body { margin: 0; height: 100%; background: #08080b; color: #f1f0f6; font: 14px/1.45 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
       body { display: grid; place-items: center; padding: 16px; background: radial-gradient(60% 50% at 50% 35%, rgba(255,40,40,0.12) 0%, transparent 70%), #08080b; }
-      form { width: min(380px, 100%); display: flex; flex-direction: column; gap: 14px; padding: 32px 28px 28px; border-radius: 20px; background: #121218; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 40px 120px -50px rgba(255,40,40,0.35); }
+      .card { width: min(400px, 100%); display: flex; flex-direction: column; gap: 14px; padding: 32px 28px 28px; border-radius: 20px; background: #121218; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 40px 120px -50px rgba(255,40,40,0.35); text-align: center; }
       img { width: 80px; height: 80px; border-radius: 50%; align-self: center; box-shadow: 0 0 25px rgba(255,30,30,0.5); object-fit: cover; }
       h1 { margin: 4px 0 0; text-align: center; font: 700 24px/1.2 Poppins, Inter, sans-serif; letter-spacing: 0.02em; }
       p { margin: 0 0 6px; text-align: center; color: rgba(241,240,246,0.6); }
-      input { width: 100%; padding: 12px 14px; border-radius: 11px; border: 1px solid rgba(255,255,255,0.1); background: #0e0e13; color: #f1f0f6; font: inherit; font-size: 15px; outline: none; }
+      input { width: 100%; padding: 12px 14px; border-radius: 11px; border: 1px solid rgba(255,255,255,0.1); background: #0e0e13; color: #f1f0f6; font: inherit; font-size: 15px; outline: none; -webkit-text-security: disc; }
       input:focus { border-color: rgba(255,60,60,0.7); }
-      button { padding: 13px; border: 0; border-radius: 11px; background: linear-gradient(100deg, #ff3b3b, #d80000 70%, #b30000); color: #ffffff; font: 700 15px Inter, sans-serif; cursor: pointer; box-shadow: 0 4px 16px rgba(255,40,40,0.35); }
+      button { width: 100%; padding: 13px; border: 0; border-radius: 11px; background: linear-gradient(100deg, #ff3b3b, #d80000 70%, #b30000); color: #ffffff; font: 700 15px Inter, sans-serif; cursor: pointer; box-shadow: 0 4px 16px rgba(255,40,40,0.35); }
       button:disabled { opacity: 0.5; cursor: wait; }
-      .err { min-height: 18px; color: #ffb3b3; text-align: center; font-size: 13px; }
+      .err { min-height: 18px; color: #ffb3b3; text-align: center; font-size: 13px; margin-top: 6px; }
+      .footer-note { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 8px; line-height: 1.4; }
     </style>
   </head>
   <body>
-    <form id="login" autocomplete="on">
+    <div class="card">
       <img src="/brand/clip-syndicate-logo.jpg" alt="Clip Syndicate" />
       <h1>Clip Syndicate</h1>
       <p>Enter the team password to continue</p>
-      <input id="password" name="password" type="password" placeholder="Password" autocomplete="current-password" required autofocus />
-      <button id="go" type="submit">Sign in</button>
-      <div class="err" id="err" role="alert"></div>
-    </form>
+      <form id="login" autocomplete="off">
+        <input id="passcode" name="access_code" type="text" placeholder="Enter team password" autocomplete="off" spellcheck="false" required autofocus />
+        <div style="height: 12px;"></div>
+        <button id="go" type="submit">Access Studio</button>
+        <div class="err" id="err" role="alert"></div>
+      </form>
+      <div class="footer-note">Clip Syndicate Studio · Internal creation workspace.<br/>Authorized team access only.</div>
+    </div>
     <script src="/login.js"></script>
   </body>
 </html>
