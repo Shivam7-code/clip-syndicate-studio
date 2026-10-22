@@ -75,7 +75,7 @@ function readBody(req) {
   });
 }
 
-const server = http.createServer(async (req, res) => {
+export async function handleRequest(req, res) {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = parsedUrl.pathname;
   const cookies = parseCookies(req);
@@ -264,14 +264,19 @@ const server = http.createServer(async (req, res) => {
   // 404 fallback
   res.writeHead(404, { 'Content-Type': 'text/plain' });
   res.end('Not Found');
-});
+}
 
-server.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`  Clip Syndicate Local Server is running!`);
-  console.log(`  Local URL:    http://localhost:${PORT}`);
-  console.log(`  Direct App:   http://localhost:${PORT}/?authed=true`);
-  console.log(`  Login Page:   http://localhost:${PORT}/login.html`);
-  console.log(`  Password:     ${VALID_PASSWORD}`);
-  console.log(`=======================================================`);
-});
+const server = http.createServer(handleRequest);
+export default handleRequest;
+
+if (!process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`  Clip Syndicate Local Server is running!`);
+    console.log(`  Local URL:    http://localhost:${PORT}`);
+    console.log(`  Direct App:   http://localhost:${PORT}/?authed=true`);
+    console.log(`  Login Page:   http://localhost:${PORT}/login.html`);
+    console.log(`  Password:     ${VALID_PASSWORD}`);
+    console.log(`=======================================================`);
+  });
+}
