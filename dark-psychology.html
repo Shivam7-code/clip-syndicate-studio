@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clip Syndicate - Dark Psychology Studio</title>
+    <link rel="icon" type="image/jpeg" href="/brand/clip-syndicate-logo.jpg" />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script>
+      if (!localStorage.getItem('cs_authed') && !document.cookie.includes('rizz_session=') && !location.search.includes('authed=true')) {
+        location.replace('/login.html');
+      }
+    </script>
+    <script src="/vendor/jszip.min.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/app.js?v=6"></script>
+  </body>
+</html>

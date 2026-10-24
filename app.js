@@ -999,6 +999,9 @@ function App() {
   // ================================================================ views
 
   const composer = html`<div class="compose">
+    <div style=${{ display: 'flex', justifyContent: 'flex-start', width: '100%', marginBottom: '-8px' }}>
+      <a href="/" style=${{ color: 'rgba(241, 240, 246, 0.65)', textDecoration: 'none', fontSize: '13px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>← Back to Hub</a>
+    </div>
     <div class="compose-head">
       <div class="eyebrow" style=${{ color: '#ff4d4d', letterSpacing: '0.08em', fontWeight: 700 }}>CLIP SYNDICATE · Dark Psychology Studio</div>
       <h1>Turn a mind game into a slideshow<br /><span class="grad" style=${{ background: 'linear-gradient(90deg, #ff4d4d, #ffffff 60%, #ff1a1a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>and Make $$.</span></h1>
@@ -1362,12 +1365,15 @@ function App() {
     html`<div class="studio">
       <header class="bar">
         <div class="bar-left" style=${{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src="/brand/clip-syndicate-logo.jpg" alt="Clip Syndicate" style=${{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', boxShadow: '0 0 10px rgba(255, 30, 30, 0.5)', border: '1px solid rgba(255, 60, 60, 0.4)' }} />
-          <span style=${{ fontWeight: 800, fontSize: '15px', letterSpacing: '0.04em', color: '#ffffff', whiteSpace: 'nowrap' }}>CLIP SYNDICATE</span>
+          <a href="/" title="Back to Clip Syndicate Hub" style=${{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}>
+            <img src="/brand/clip-syndicate-logo.jpg" alt="Clip Syndicate" style=${{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', boxShadow: '0 0 10px rgba(255, 30, 30, 0.5)', border: '1px solid rgba(255, 60, 60, 0.4)' }} />
+            <span style=${{ fontWeight: 800, fontSize: '15px', letterSpacing: '0.04em', color: '#ffffff', whiteSpace: 'nowrap' }}>CLIP SYNDICATE</span>
+          </a>
           <span class="dot" style=${{ opacity: 0.35 }}>·</span>
           <span class="bar-title" title=${script.hook}>${script.hook || 'Untitled slideshow'}</span>
         </div>
         <div class="bar-right">
+          <a href="/" class="btn ghost sm" style=${{ textDecoration: 'none' }}>← Hub</a>
           <${Btn} size="sm" onClick=${() => setComposing(true)}>＋ New<//>
           <${Btn} size="sm" title="Sign out" onClick=${logout}>⎋<//>
           <${Btn} size="sm" onClick=${() => setPicker({ key: null })}>🖼 Photos ${library.length ? html`<span class="badge">${library.length}</span>` : ''}<//>

@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clip Syndicate - DM Screenshot Studio</title>
+    <link rel="icon" type="image/jpeg" href="/brand/clip-syndicate-logo.jpg" />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <script>
+      if (!localStorage.getItem('cs_authed') && !document.cookie.includes('rizz_session=') && !location.search.includes('authed=true')) {
+        location.replace('/login.html');
+      }
+    </script>
+    <style>
+      :root {
+        --bg: #08080b;
+        --bg-panel: #111116;
+        --bg-panel-2: #16161d;
+        --border: rgba(255, 255, 255, 0.08);
+        --border-hover: rgba(255, 60, 60, 0.35);
+        --text: #f1f0f6;
+        --muted: rgba(241, 240, 246, 0.6);
+        --accent-red: #ff3333;
+        --glow: rgba(255, 45, 45, 0.16);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        min-height: 100vh;
+        background: radial-gradient(ellipse 70% 50% at 50% 10%, var(--glow) 0%, transparent 60%), var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        padding: 0 20px 60px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
+      }
+      .brand img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 0 16px rgba(255, 40, 40, 0.45);
+        border: 1px solid rgba(255, 60, 60, 0.4);
+      }
+      .brand-title {
+        font-family: Poppins, Inter, sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        letter-spacing: 0.05em;
+      }
+      .hub-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      .hub-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .container {
+        max-width: 900px;
+        margin: 50px auto 0;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid rgba(255, 60, 60, 0.3);
+        color: #ff6666;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        align-self: flex-start;
+      }
+      h1 {
+        font-family: Poppins, Inter, sans-serif;
+        font-size: 38px;
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+      p.desc {
+        color: var(--muted);
+        font-size: 16px;
+        max-width: 680px;
+      }
+      .card {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .meta-item {
+        background: var(--bg-panel-2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .meta-label {
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .meta-val {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffffff;
+        word-break: break-all;
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #4ade80;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #22c55e;
+      }
+      .ref-link {
+        color: #ff6666;
+        text-decoration: none;
+      }
+      .ref-link:hover {
+        text-decoration: underline;
+      }
+      .mount-box {
+        border: 2px dashed rgba(255, 60, 60, 0.3);
+        border-radius: 14px;
+        padding: 36px 20px;
+        text-align: center;
+        background: rgba(255, 50, 50, 0.02);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .mount-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(255, 50, 50, 0.12);
+        border: 1px solid rgba(255, 60, 60, 0.25);
+        display: grid;
+        place-items: center;
+        color: var(--accent-red);
+      }
+      .btn-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #ff3b3b, #d80000 70%, #b30000);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 22px;
+        border-radius: 10px;
+        text-decoration: none;
+        box-shadow: 0 8px 24px -6px rgba(255, 40, 40, 0.5);
+        border: 0;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-primary:hover {
+        filter: brightness(1.08);
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(255, 255, 255, 0.18);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="/" class="brand">
+        <img src="/brand/clip-syndicate-logo.jpg" alt="Clip Syndicate" />
+        <span class="brand-title">CLIP SYNDICATE</span>
+      </a>
+      <a href="/" class="hub-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to Hub
+      </a>
+    </nav>
+
+    <main class="container">
+      <div class="header-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Promo Slide Tools · Dedicated Route
+      </div>
+      <div>
+        <h1>DM Screenshot Studio</h1>
+        <p class="desc">High-engagement promo slide generator for viral DM conversations, cliffhanger chats, and app promos.</p>
+      </div>
+
+      <div class="card">
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">Replication Target</div>
+            <div class="meta-val">
+              <a href="https://www.slideshows.gg/app/promo/" target="_blank" rel="noopener noreferrer" class="ref-link">slideshows.gg/app/promo/ ↗</a>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Module Scope</div>
+            <div class="meta-val">Promo slide tools</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Replication Status</div>
+            <div class="status-pill">
+              <span class="status-dot"></span>
+              Ready for REA replication
+            </div>
+          </div>
+        </div>
+
+        <div id="promo-root" class="mount-box">
+          <div class="mount-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h3 style="font-size: 18px; font-weight: 700;">Promo Slide Studio Mount Point</h3>
+          <p style="color: var(--muted); font-size: 14px; max-width: 500px;">
+            This route is ready to host the replicated DM Screenshot / Promo Slide component extracted via REA from <code>slideshows.gg/app/promo/</code>.
+          </p>
+          <div class="btn-row">
+            <a href="/" class="btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              Return to Hub
+            </a>
+            <a href="https://www.slideshows.gg/app/promo/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+              Open Reference Website ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

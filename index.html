@@ -3,19 +3,455 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clip Syndicate - Dark Psychology Studio</title>
+    <title>Clip Syndicate - Creator Toolkit</title>
     <link rel="icon" type="image/jpeg" href="/brand/clip-syndicate-logo.jpg" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
-    <link rel="stylesheet" href="/styles.css" />
     <script>
       if (!localStorage.getItem('cs_authed') && !document.cookie.includes('rizz_session=') && !location.search.includes('authed=true')) {
         location.replace('/login.html');
       }
     </script>
-    <script src="/vendor/jszip.min.js"></script>
+    <style>
+      :root {
+        --bg: #08080b;
+        --bg-panel: #111116;
+        --bg-panel-hover: #15151d;
+        --border: rgba(255, 255, 255, 0.08);
+        --border-hover: rgba(255, 50, 50, 0.4);
+        --text: #f1f0f6;
+        --text-secondary: rgba(241, 240, 246, 0.72);
+        --muted: rgba(241, 240, 246, 0.48);
+        --accent-red: #ff3333;
+        --accent-red-glow: rgba(255, 40, 40, 0.25);
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        min-height: 100vh;
+        background: radial-gradient(80% 50% at 50% 0%, rgba(255, 30, 30, 0.12) 0%, transparent 70%),
+                    radial-gradient(50% 40% at 80% 90%, rgba(255, 30, 30, 0.05) 0%, transparent 60%),
+                    var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        padding: 0 24px 80px;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      /* Navigation */
+      .navbar {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        color: inherit;
+      }
+      .brand img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 0 18px rgba(255, 40, 40, 0.5);
+        border: 1px solid rgba(255, 60, 60, 0.4);
+      }
+      .brand-title {
+        font-family: Poppins, Inter, sans-serif;
+        font-weight: 800;
+        font-size: 17px;
+        letter-spacing: 0.04em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand-tag {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: rgba(255, 50, 50, 0.12);
+        color: #ff6666;
+        border: 1px solid rgba(255, 60, 60, 0.3);
+        text-transform: uppercase;
+      }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .team-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+      }
+      .team-dot {
+        width: 7px;
+        height: 7px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #22c55e;
+      }
+      .signout-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .signout-btn:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Hero */
+      .hero {
+        max-width: 900px;
+        margin: 72px auto 56px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(255, 40, 40, 0.08);
+        border: 1px solid rgba(255, 60, 60, 0.25);
+        color: #ff6666;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .hero h1 {
+        font-family: Poppins, Inter, sans-serif;
+        font-size: clamp(34px, 5.5vw, 56px);
+        font-weight: 800;
+        line-height: 1.12;
+        letter-spacing: -0.025em;
+        color: #ffffff;
+      }
+      .hero-highlight {
+        background: linear-gradient(100deg, #ff4d4d 0%, #ffffff 50%, #ff3333 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero p {
+        font-size: clamp(15px, 2vw, 17px);
+        color: var(--text-secondary);
+        max-width: 660px;
+        line-height: 1.6;
+      }
+
+      /* Studio Cards Grid */
+      .grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 28px;
+      }
+      .card {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 36px 32px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: var(--border-hover);
+        box-shadow: 0 30px 80px -25px var(--accent-red-glow);
+        background: var(--bg-panel-hover);
+      }
+      
+      .card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .icon-box {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(255, 50, 50, 0.16), rgba(255, 20, 20, 0.05));
+        border: 1px solid rgba(255, 60, 60, 0.3);
+        display: grid;
+        place-items: center;
+        color: var(--accent-red);
+        box-shadow: 0 0 24px -6px rgba(255, 40, 40, 0.4);
+      }
+      .card-tag {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+      }
+      .card-title {
+        font-family: Poppins, Inter, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.01em;
+      }
+      .card-desc {
+        color: var(--text-secondary);
+        font-size: 14.5px;
+        line-height: 1.6;
+      }
+
+      .feature-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .feature-pill {
+        font-size: 12px;
+        color: rgba(241, 240, 246, 0.65);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 4px 10px;
+        border-radius: 6px;
+      }
+
+      .card-footer {
+        padding-top: 8px;
+      }
+      .open-btn {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .open-btn.primary {
+        background: linear-gradient(135deg, #ff3b3b 0%, #d80000 70%, #b30000 100%);
+        color: #ffffff;
+        box-shadow: 0 10px 30px -10px rgba(255, 40, 40, 0.6);
+        border: 0;
+      }
+      .open-btn.primary:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+        box-shadow: 0 14px 36px -8px rgba(255, 40, 40, 0.8);
+      }
+      .open-btn.secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      .open-btn.secondary:hover {
+        background: rgba(255, 50, 50, 0.12);
+        border-color: rgba(255, 60, 60, 0.5);
+        color: #ffffff;
+      }
+
+      /* Footer */
+      .footer {
+        max-width: 900px;
+        margin: 64px auto 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12.5px;
+        line-height: 1.6;
+        border-top: 1px solid var(--border);
+        padding-top: 28px;
+      }
+
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          margin-top: 40px;
+          margin-bottom: 40px;
+        }
+        .navbar {
+          flex-direction: column;
+          gap: 16px;
+          align-items: flex-start;
+        }
+        .nav-right {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/app.js?v=5"></script>
+    <!-- Top Navbar -->
+    <header class="navbar">
+      <a href="/" class="brand">
+        <img src="/brand/clip-syndicate-logo.jpg" alt="Clip Syndicate" />
+        <span class="brand-title">
+          CLIP SYNDICATE
+          <span class="brand-tag">Creator Hub</span>
+        </span>
+      </a>
+      <div class="nav-right">
+        <div class="team-status">
+          <span class="team-dot"></span>
+          <span>Authorized Workspace</span>
+        </div>
+        <button id="signout" class="signout-btn" type="button">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Main Hero -->
+    <main>
+      <section class="hero">
+        <div class="hero-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Elite Creator Suite
+        </div>
+        <h1>Your ideas. Your tools.<br /><span class="hero-highlight">Your next viral hit.</span></h1>
+        <p>
+          Clip Syndicate is an internal creator toolkit engineered for high-engagement slideshow production, viral social psychology scripts, and high-conversion message screenshots. Select your studio below to launch.
+        </p>
+      </section>
+
+      <!-- Studio Cards -->
+      <section class="grid">
+        <!-- Card 1: Dark Psychology Studio -->
+        <article class="card">
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
+                <path d="M9 21h6"/>
+              </svg>
+            </div>
+            <span class="card-tag">Mind Games & Slides</span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Dark Psychology Studio</h2>
+            <p class="card-desc">
+              Turn psychological dynamics, tension scripts, and toxic text dynamics into viral slideshows with AI generation, reaction beats, and app screenshots (RIZZ, Plug AI, WRizz).
+            </p>
+            <div class="feature-pills">
+              <span class="feature-pill">AI Scriptwriter</span>
+              <span class="feature-pill">Dynamic Beats</span>
+              <span class="feature-pill">RIZZ / Plug / WRizz</span>
+              <span class="feature-pill">1080×1920 ZIP</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="/dark-psychology" class="open-btn primary">
+              Open Studio
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 2: DM Screenshot Studio -->
+        <article class="card">
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <span class="card-tag">Promo Slide Tools</span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">DM Screenshot Studio</h2>
+            <p class="card-desc">
+              Create viral DM conversation screenshots, promo slide sequences, and high-converting message mockups built to drive engagement and clicks.
+            </p>
+            <div class="feature-pills">
+              <span class="feature-pill">Promo Slide Tools</span>
+              <span class="feature-pill">Realistic DMs</span>
+              <span class="feature-pill">slideshows.gg Style</span>
+              <span class="feature-pill">High-Res Export</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="/promo" class="open-btn secondary">
+              Open Studio
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      Clip Syndicate Studio · Internal creation workspace.<br />
+      Authorized team access only.
+    </footer>
+
+    <script>
+      document.getElementById('signout').addEventListener('click', async () => {
+        try {
+          await fetch('/api/logout', { method: 'POST' });
+        } catch {}
+        localStorage.removeItem('cs_authed');
+        location.replace('/login.html');
+      });
+    </script>
   </body>
 </html>

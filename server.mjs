@@ -236,13 +236,25 @@ export async function handleRequest(req, res) {
     return res.end(JSON.stringify({ error: 'Unsupported mode' }));
   }
 
-  // Auth gate for root
-  if (pathname === '/' || pathname === '/index.html') {
+  // Auth gate for protected pages
+  const protectedPages = {
+    '/': 'index.html',
+    '/index.html': 'index.html',
+    '/dark-psychology': 'dark-psychology.html',
+    '/dark-psychology.html': 'dark-psychology.html',
+    '/promo': 'promo.html',
+    '/promo.html': 'promo.html',
+    '/dm-studio': 'promo.html',
+    '/dm-studio.html': 'promo.html',
+  };
+
+  if (pathname in protectedPages) {
     if (!isAuthenticated) {
       res.writeHead(302, { 'Location': '/login.html' });
       return res.end();
     }
-    const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+    const file = protectedPages[pathname];
+    const html = fs.readFileSync(path.join(__dirname, file), 'utf8');
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(html);
   }
@@ -275,7 +287,9 @@ if (!process.env.VERCEL) {
     console.log(`=======================================================`);
     console.log(`  Clip Syndicate Local Server is running!`);
     console.log(`  Local URL:    http://localhost:${PORT}`);
-    console.log(`  Direct App:   http://localhost:${PORT}/?authed=true`);
+    console.log(`  Hub (Home):   http://localhost:${PORT}/?authed=true`);
+    console.log(`  Dark Psych:   http://localhost:${PORT}/dark-psychology?authed=true`);
+    console.log(`  DM Studio:    http://localhost:${PORT}/promo?authed=true`);
     console.log(`  Login Page:   http://localhost:${PORT}/login.html`);
     console.log(`  Password:     ${VALID_PASSWORD}`);
     console.log(`=======================================================`);
