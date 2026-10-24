@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clip Syndicate - DM Screenshot Studio</title>
+    <title>Clip Syndicate - DM Screenshot & Promo Studio</title>
     <link rel="icon" type="image/jpeg" href="/brand/clip-syndicate-logo.jpg" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
+    <script src="/vendor/jszip.min.js"></script>
     <script>
       if (!localStorage.getItem('cs_authed') && !document.cookie.includes('rizz_session=') && !location.search.includes('authed=true')) {
         location.replace('/login.html');
@@ -13,33 +14,38 @@
     </script>
     <style>
       :root {
-        --bg: #08080b;
-        --bg-panel: #111116;
-        --bg-panel-2: #16161d;
+        --bg: #07070a;
+        --bg-panel: #101015;
+        --bg-panel-2: #15151c;
+        --bg-panel-3: #1a1a24;
         --border: rgba(255, 255, 255, 0.08);
-        --border-hover: rgba(255, 60, 60, 0.35);
-        --text: #f1f0f6;
-        --muted: rgba(241, 240, 246, 0.6);
+        --border-hover: rgba(255, 50, 50, 0.35);
+        --text: #f3f2f8;
+        --muted: rgba(243, 242, 248, 0.6);
         --accent-red: #ff3333;
-        --glow: rgba(255, 45, 45, 0.16);
+        --accent-red-hover: #ff4d4d;
+        --glow: rgba(255, 45, 45, 0.15);
+        --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Inter, Arial, sans-serif;
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
         min-height: 100vh;
-        background: radial-gradient(ellipse 70% 50% at 50% 10%, var(--glow) 0%, transparent 60%), var(--bg);
+        background: radial-gradient(ellipse 70% 40% at 50% 0%, var(--glow) 0%, transparent 60%), var(--bg);
         color: var(--text);
         font-family: Inter, system-ui, -apple-system, sans-serif;
         line-height: 1.5;
         padding: 0 20px 60px;
         -webkit-font-smoothing: antialiased;
       }
+      
+      /* Navigation */
       .nav {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 24px 0;
+        padding: 20px 0;
         border-bottom: 1px solid var(--border);
       }
       .brand {
@@ -63,6 +69,11 @@
         font-size: 16px;
         letter-spacing: 0.05em;
       }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
       .hub-btn {
         display: inline-flex;
         align-items: center;
@@ -75,229 +86,1910 @@
         font-size: 13px;
         font-weight: 600;
         text-decoration: none;
-        transition: background 0.15s, border-color 0.15s;
+        transition: all 0.15s ease;
       }
       .hub-btn:hover {
         background: rgba(255, 255, 255, 0.1);
         border-color: rgba(255, 255, 255, 0.2);
       }
+      .hub-btn.active {
+        background: rgba(255, 50, 50, 0.15);
+        border-color: rgba(255, 60, 60, 0.4);
+        color: #ff6666;
+      }
+
+      /* Container & Main Layout */
       .container {
-        max-width: 900px;
-        margin: 50px auto 0;
+        max-width: 1400px;
+        margin: 32px auto 0;
         display: flex;
         flex-direction: column;
-        gap: 28px;
+        gap: 24px;
+      }
+      .header-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
       }
       .header-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 14px;
+        padding: 5px 12px;
         border-radius: 999px;
         background: rgba(255, 50, 50, 0.1);
         border: 1px solid rgba(255, 60, 60, 0.3);
         color: #ff6666;
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        align-self: flex-start;
+        margin-bottom: 8px;
       }
       h1 {
         font-family: Poppins, Inter, sans-serif;
-        font-size: 38px;
-        font-weight: 700;
-        line-height: 1.15;
+        font-size: 32px;
+        font-weight: 800;
         letter-spacing: -0.02em;
+        line-height: 1.2;
       }
-      p.desc {
+      p.subtitle {
         color: var(--muted);
-        font-size: 16px;
-        max-width: 680px;
+        font-size: 15px;
+        margin-top: 4px;
       }
-      .card {
+
+      /* Mode Switcher Tabs */
+      .tabs-nav {
+        display: inline-flex;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .tab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .tab-btn:hover {
+        color: #fff;
+      }
+      .tab-btn.active {
+        background: var(--bg-panel-3);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Workspace Grid */
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(360px, 460px) 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+      @media (max-width: 960px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Inspector Controls */
+      .panel {
         background: var(--bg-panel);
         border: 1px solid var(--border);
         border-radius: 20px;
-        padding: 32px;
-        box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+        padding: 24px;
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 20px;
+        box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7);
       }
-      .meta-grid {
+      .panel-title {
+        font-family: Poppins, Inter, sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .field-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .input-text, .input-select, .input-textarea {
+        width: 100%;
+        background: var(--bg-panel-2);
+        border: 1px solid var(--border);
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .input-text:focus, .input-select:focus, .input-textarea:focus {
+        border-color: rgba(255, 60, 60, 0.5);
+      }
+      .input-textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .row-2 {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
-      .meta-item {
+      .row-3 {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 12px;
+      }
+
+      /* Toggles / Pills */
+      .toggles-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .toggle-chip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: var(--bg-panel-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 13px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.15s;
+      }
+      .toggle-chip:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .toggle-chip.active {
+        background: rgba(255, 50, 50, 0.12);
+        border-color: rgba(255, 60, 60, 0.4);
+        color: #ff6666;
+      }
+      .switch-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .toggle-chip.active .switch-dot {
+        background: #ff3333;
+        box-shadow: 0 0 8px #ff3333;
+      }
+
+      /* Messages Manager */
+      .msg-card {
         background: var(--bg-panel-2);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 16px;
-      }
-      .meta-label {
-        font-size: 11.5px;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--muted);
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
-      .meta-val {
-        font-size: 14px;
-        font-weight: 600;
-        color: #ffffff;
-        word-break: break-all;
-      }
-      .status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: #4ade80;
-        font-size: 13px;
-        font-weight: 600;
-      }
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        background: #22c55e;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #22c55e;
-      }
-      .ref-link {
-        color: #ff6666;
-        text-decoration: none;
-      }
-      .ref-link:hover {
-        text-decoration: underline;
-      }
-      .mount-box {
-        border: 2px dashed rgba(255, 60, 60, 0.3);
-        border-radius: 14px;
-        padding: 36px 20px;
-        text-align: center;
-        background: rgba(255, 50, 50, 0.02);
+        padding: 12px;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 12px;
+        gap: 8px;
       }
-      .mount-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        background: rgba(255, 50, 50, 0.12);
-        border: 1px solid rgba(255, 60, 60, 0.25);
+      .msg-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .sender-badge {
+        display: inline-flex;
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+      .sender-badge.them {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ddd;
+      }
+      .sender-badge.me {
+        background: #027dfd;
+        color: #fff;
+      }
+      .msg-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .btn-icon {
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
         display: grid;
         place-items: center;
-        color: var(--accent-red);
       }
-      .btn-row {
+      .btn-icon:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Presets & Actions */
+      .preset-chips {
         display: flex;
-        gap: 12px;
         flex-wrap: wrap;
-        margin-top: 8px;
+        gap: 8px;
+      }
+      .preset-btn {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .preset-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
       }
       .btn-primary {
         background: linear-gradient(135deg, #ff3b3b, #d80000 70%, #b30000);
         color: #ffffff;
-        font-weight: 600;
-        font-size: 14px;
-        padding: 12px 22px;
-        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14.5px;
+        padding: 13px 24px;
+        border-radius: 12px;
         text-decoration: none;
         box-shadow: 0 8px 24px -6px rgba(255, 40, 40, 0.5);
         border: 0;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
+        width: 100%;
+        transition: filter 0.15s;
       }
       .btn-primary:hover {
-        filter: brightness(1.08);
+        filter: brightness(1.1);
       }
-      .btn-secondary {
-        background: rgba(255, 255, 255, 0.05);
-        color: #ffffff;
-        font-weight: 600;
-        font-size: 14px;
-        padding: 12px 20px;
-        border-radius: 10px;
-        text-decoration: none;
+      .btn-outline {
+        background: transparent;
         border: 1px solid var(--border);
+        color: var(--text);
+        font-weight: 600;
+        font-size: 13.5px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.15s;
       }
-      .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.09);
-        border-color: rgba(255, 255, 255, 0.18);
+      .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Preview Display Column */
+      .stage-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        min-height: 600px;
+      }
+
+      /* Scaled Phone Screen */
+      .phone-shell {
+        position: relative;
+        width: min(390px, 92vw);
+        height: min(844px, 199.3vw);
+        border-radius: 46px;
+        box-shadow: 0 0 0 12px #1f1f24, 0 0 0 14px rgba(255, 255, 255, 0.1), 0 35px 80px -20px rgba(0, 0, 0, 0.95);
+        overflow: hidden;
+        user-select: none;
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        transition: background 0.2s;
+      }
+      .phone-shell.light-theme {
+        background: #fff;
+        box-shadow: 0 0 0 12px #d8d8de, 0 0 0 14px rgba(0, 0, 0, 0.1), 0 35px 80px -20px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Dynamic Island / Notch */
+      .notch {
+        position: absolute;
+        top: 11px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 32px;
+        background: #000;
+        border-radius: 18px;
+        z-index: 30;
+      }
+      .phone-shell.light-theme .notch {
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+
+      /* iOS Status Bar */
+      .ios-status {
+        height: 54px;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--ios-font);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.2px;
+        z-index: 20;
+        color: #fff;
+      }
+      .phone-shell.light-theme .ios-status {
+        color: #000;
+      }
+      .status-icons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Contact Header */
+      .contact-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 16px 12px;
+        z-index: 20;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .phone-shell.light-theme .contact-bar {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      .back-chevron {
+        color: #027dfd;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 17px;
+        cursor: pointer;
+      }
+      .contact-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .contact-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: linear-gradient(180deg, #a5abb8 0%, #858c99 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 19px;
+        font-weight: 600;
+      }
+      .contact-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .contact-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+      .phone-shell.light-theme .contact-pill {
+        background: rgba(0, 0, 0, 0.06);
+        color: #000;
+      }
+
+      /* Message Stream */
+      .chat-stream {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-family: var(--ios-font);
+      }
+      .date-separator {
+        text-align: center;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #8e8e93;
+        margin: 6px 0;
+      }
+      .bubble-wrapper {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        max-width: 76%;
+      }
+      .bubble-wrapper.them {
+        align-self: flex-start;
+      }
+      .bubble-wrapper.me {
+        align-self: flex-end;
+      }
+      .bubble {
+        padding: 9px 15px 10px;
+        border-radius: 19px;
+        font-size: 16px;
+        line-height: 21px;
+        letter-spacing: -0.2px;
+        word-break: break-word;
+        white-space: pre-wrap;
+      }
+      .bubble-wrapper.them .bubble {
+        background: #303033;
+        color: #ffffff;
+      }
+      .phone-shell.light-theme .bubble-wrapper.them .bubble {
+        background: #e9e9eb;
+        color: #000000;
+      }
+      .bubble-wrapper.me .bubble {
+        background: #027dfd;
+        color: #ffffff;
+      }
+      .phone-shell.sms-theme .bubble-wrapper.me .bubble {
+        background: #34c759 !important;
+      }
+      .phone-shell.light-theme:not(.sms-theme) .bubble-wrapper.me .bubble {
+        background: linear-gradient(180deg, #3f9bff 0%, #0a7aff 100%);
+      }
+
+      /* Tapback Reaction Badges */
+      .tapback-badge {
+        position: absolute;
+        top: -10px;
+        font-size: 17px;
+        background: #2c2c2e;
+        border: 2px solid #000;
+        border-radius: 14px;
+        padding: 1px 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        z-index: 10;
+      }
+      .phone-shell.light-theme .tapback-badge {
+        background: #e5e5ea;
+        border-color: #fff;
+      }
+      .bubble-wrapper.them .tapback-badge {
+        right: -8px;
+      }
+      .bubble-wrapper.me .tapback-badge {
+        left: -8px;
+      }
+
+      /* Typing Bubble */
+      .typing-bubble {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 12px 16px;
+        background: #303033;
+        border-radius: 18px;
+        align-self: flex-start;
+      }
+      .phone-shell.light-theme .typing-bubble {
+        background: #e9e9eb;
+      }
+      .typing-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #8e8e93;
+        animation: typingBounce 1.4s infinite ease-in-out both;
+      }
+      .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+      .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+      @keyframes typingBounce {
+        0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+        40% { transform: scale(1); opacity: 1; }
+      }
+
+      /* Promo / Sponsor Card */
+      .promo-sponsor-card {
+        width: 100%;
+        max-width: 300px;
+        align-self: flex-end;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(165deg, #c8b3f4 0%, #b7bdf8 45%, #9fcaf9 100%);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        margin-top: 4px;
+      }
+      .promo-body {
+        position: relative;
+        padding: 14px 16px 12px;
+        text-align: center;
+        color: #161a3a;
+      }
+      .promo-logo {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: linear-gradient(180deg, #4f8cff 0%, #1d5ff0 100%);
+        color: #fff;
+        font-weight: 900;
+        font-size: 13px;
+        display: grid;
+        place-items: center;
+      }
+      .promo-amount {
+        font-size: 42px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1;
+      }
+      .promo-pot {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        opacity: 0.65;
+        margin-top: 3px;
+      }
+      .promo-title {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-top: 12px;
+      }
+      .promo-cta-pill {
+        margin-top: 12px;
+        height: 24px;
+        border-radius: 12px;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #161a3a;
+      }
+      .promo-footer-banner {
+        background: #16171c;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .delivery-receipt {
+        font-size: 11.5px;
+        color: #8e8e93;
+        text-align: right;
+        margin-top: 2px;
+        padding-right: 4px;
+        align-self: flex-end;
+      }
+
+      /* Compose Bar */
+      .compose-bar {
+        padding: 8px 12px 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 20;
+      }
+      .compose-btn-plus {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #1c1c1e;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        cursor: pointer;
+      }
+      .phone-shell.light-theme .compose-btn-plus {
+        background: #f2f2f7;
+        color: #000;
+      }
+      .compose-input-pill {
+        flex: 1;
+        height: 40px;
+        border-radius: 20px;
+        background: #1c1c1e;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        font-size: 16px;
+        color: #767678;
+      }
+      .phone-shell.light-theme .compose-input-pill {
+        background: #f2f2f7;
+        color: #8e8e93;
+      }
+      .home-bar {
+        width: 134px;
+        height: 5px;
+        border-radius: 3px;
+        background: #fff;
+        margin: 4px auto 8px;
+      }
+      .phone-shell.light-theme .home-bar {
+        background: #000;
+      }
+
+      /* Story Slide Tool Grid */
+      .slides-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        width: 100%;
+      }
+      .slide-card {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .slide-canvas-box {
+        width: 100%;
+        background: #000;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      }
+      .slide-canvas-box canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .slide-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .slide-badge {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .hidden-canvas {
+        display: none;
       }
     </style>
   </head>
   <body>
+    <!-- Top Navigation -->
     <nav class="nav">
       <a href="/" class="brand">
         <img src="/brand/clip-syndicate-logo.jpg" alt="Clip Syndicate" />
         <span class="brand-title">CLIP SYNDICATE</span>
       </a>
-      <a href="/" class="hub-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        Back to Hub
-      </a>
+      <div class="nav-links">
+        <a href="/dark-psychology" class="hub-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/></svg>
+          Dark Psychology Studio
+        </a>
+        <a href="/" class="hub-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back to Hub
+        </a>
+      </div>
     </nav>
 
+    <!-- Main Workspace Container -->
     <main class="container">
-      <div class="header-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Promo Slide Tools · Dedicated Route
-      </div>
-      <div>
-        <h1>DM Screenshot Studio</h1>
-        <p class="desc">High-engagement promo slide generator for viral DM conversations, cliffhanger chats, and app promos.</p>
-      </div>
-
-      <div class="card">
-        <div class="meta-grid">
-          <div class="meta-item">
-            <div class="meta-label">Replication Target</div>
-            <div class="meta-val">
-              <a href="https://www.slideshows.gg/app/promo/" target="_blank" rel="noopener noreferrer" class="ref-link">slideshows.gg/app/promo/ ↗</a>
-            </div>
+      <div class="header-row">
+        <div>
+          <div class="header-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Replicated from slideshows.gg/app/promo
           </div>
-          <div class="meta-item">
-            <div class="meta-label">Module Scope</div>
-            <div class="meta-val">Promo slide tools</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Replication Status</div>
-            <div class="status-pill">
-              <span class="status-dot"></span>
-              Ready for REA replication
-            </div>
-          </div>
+          <h1>DM Screenshot Studio</h1>
+          <p class="subtitle">Generate high-conversion cliffhanger text threads, sponsored prediction cards, and viral story crops.</p>
         </div>
 
-        <div id="promo-root" class="mount-box">
-          <div class="mount-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <!-- Mode Switcher Tabs -->
+        <div class="tabs-nav">
+          <button type="button" class="tab-btn active" id="tab-mockup" onclick="switchTab('mockup')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+            iPhone DM Mockup
+          </button>
+          <button type="button" class="tab-btn" id="tab-carousel" onclick="switchTab('carousel')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 8 3 4-3 4"/></svg>
+            Multi-Slide Carousel
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 1: IPHONE DM MOCKUP STUDIO -->
+      <div id="section-mockup" class="workspace">
+        <!-- Controls Panel -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Inspector & Controls</span>
+            <span style="font-size: 12px; color: var(--muted); font-weight: normal;">Live Sync</span>
           </div>
-          <h3 style="font-size: 18px; font-weight: 700;">Promo Slide Studio Mount Point</h3>
-          <p style="color: var(--muted); font-size: 14px; max-width: 500px;">
-            This route is ready to host the replicated DM Screenshot / Promo Slide component extracted via REA from <code>slideshows.gg/app/promo/</code>.
-          </p>
-          <div class="btn-row">
-            <a href="/" class="btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-              Return to Hub
-            </a>
-            <a href="https://www.slideshows.gg/app/promo/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-              Open Reference Website ↗
-            </a>
+
+          <!-- Feature Toggles -->
+          <div class="field-group">
+            <label class="field-label">Display Modes</label>
+            <div class="toggles-grid">
+              <div class="toggle-chip active" id="chip-dark" onclick="toggleOption('dark')">
+                <span>Dark Mode</span>
+                <span class="switch-dot"></span>
+              </div>
+              <div class="toggle-chip" id="chip-sms" onclick="toggleOption('sms')">
+                <span>Green SMS</span>
+                <span class="switch-dot"></span>
+              </div>
+              <div class="toggle-chip" id="chip-typing" onclick="toggleOption('typing')">
+                <span>Typing Bubble</span>
+                <span class="switch-dot"></span>
+              </div>
+              <div class="toggle-chip active" id="chip-promo" onclick="toggleOption('promo')">
+                <span>Promo Sponsor Card</span>
+                <span class="switch-dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact & Device Controls -->
+          <div class="row-3">
+            <div class="field-group">
+              <label class="field-label">Contact Name</label>
+              <input type="text" id="cfg-contact" class="input-text" value="Sarah" oninput="updateState()" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Clock</label>
+              <input type="text" id="cfg-time" class="input-text" value="9:41" oninput="updateState()" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Battery %</label>
+              <input type="number" id="cfg-battery" class="input-text" value="88" min="1" max="100" oninput="updateState()" />
+            </div>
+          </div>
+
+          <!-- Contact Avatar Upload -->
+          <div class="field-group">
+            <label class="field-label">Contact Photo</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="file" id="cfg-avatar-file" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)" />
+              <button type="button" class="btn-outline" style="flex: 1;" onclick="document.getElementById('cfg-avatar-file').click()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                Upload Photo
+              </button>
+              <button type="button" class="btn-outline" id="btn-remove-avatar" style="display: none;" onclick="removeAvatar()">
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <!-- Receipt & Stamp -->
+          <div class="row-2">
+            <div class="field-group">
+              <label class="field-label">Delivery Receipt</label>
+              <select id="cfg-receipt" class="input-select" onchange="updateState()">
+                <option value="delivered">Delivered</option>
+                <option value="read">Read</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Date Header</label>
+              <input type="text" id="cfg-stamp" class="input-text" value="Today 9:41 AM" oninput="updateState()" />
+            </div>
+          </div>
+
+          <!-- Promo / Sponsor Card Settings -->
+          <div id="promo-settings-box" class="field-group" style="background: var(--bg-panel-2); padding: 14px; border-radius: 12px; border: 1px solid var(--border);">
+            <div class="field-label" style="color: #ff6666; margin-bottom: 6px;">Sponsor Card Customizer</div>
+            <div class="row-2">
+              <div class="field-group">
+                <label class="field-label">Amount</label>
+                <input type="text" id="cfg-promo-amount" class="input-text" value="$25" oninput="updateState()" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Total Pot</label>
+                <input type="text" id="cfg-promo-pot" class="input-text" value="$50 TOTAL POT" oninput="updateState()" />
+              </div>
+            </div>
+            <div class="field-group" style="margin-top: 8px;">
+              <label class="field-label">Prediction / Challenge Title</label>
+              <input type="text" id="cfg-promo-title" class="input-text" value="Will he text back within 10 minutes?" oninput="updateState()" />
+            </div>
+          </div>
+
+          <!-- Message Thread Manager -->
+          <div class="field-group">
+            <div class="panel-title" style="font-size: 14px; margin-bottom: 4px;">
+              <span>Conversation Bubbles</span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="addMessage('them')">+ Them</button>
+                <button type="button" class="btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="addMessage('me')">+ Me</button>
+              </div>
+            </div>
+            <div id="messages-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+              <!-- Message items dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Presets -->
+          <div class="field-group">
+            <label class="field-label">Load Viral Hooks</label>
+            <div class="preset-chips">
+              <button type="button" class="preset-btn" onclick="loadMockupPreset('nightIn')">Night In Invite</button>
+              <button type="button" class="preset-btn" onclick="loadMockupPreset('exText')">Ex Texted Me</button>
+              <button type="button" class="preset-btn" onclick="loadMockupPreset('lateNight')">10:47 PM Fox</button>
+              <button type="button" class="preset-btn" onclick="loadMockupPreset('icedCoffee')">Iced Coffee</button>
+            </div>
+          </div>
+
+          <!-- Export Button -->
+          <button type="button" class="btn-primary" onclick="exportMockupPNG()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Download High-Res Screenshot (PNG)
+          </button>
+        </div>
+
+        <!-- Phone Mockup Stage -->
+        <div class="stage-col">
+          <div class="phone-shell" id="phone-container">
+            <!-- Dynamic Island -->
+            <div class="notch"></div>
+
+            <!-- iOS Status Bar -->
+            <div class="ios-status">
+              <span id="display-time">9:41</span>
+              <div class="status-icons">
+                <!-- 4 Cellular Bars -->
+                <svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor">
+                  <rect x="0" y="8" width="3.2" height="4" rx="1"></rect>
+                  <rect x="5" y="5.5" width="3.2" height="6.5" rx="1"></rect>
+                  <rect x="10" y="3" width="3.2" height="9" rx="1"></rect>
+                  <rect x="15" y="0" width="3.2" height="12" rx="1"></rect>
+                </svg>
+                <!-- Wi-Fi 3 Arcs -->
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
+                  <path d="M8.5 2.3c2.4 0 4.6.9 6.3 2.5l1.2-1.3A10.6 10.6 0 0 0 8.5.5 10.6 10.6 0 0 0 1 3.5l1.2 1.3A8.9 8.9 0 0 1 8.5 2.3Z"></path>
+                  <path d="M8.5 5.6c1.5 0 2.9.6 4 1.6l1.2-1.3a7.6 7.6 0 0 0-10.4 0l1.2 1.3c1.1-1 2.5-1.6 4-1.6Z"></path>
+                  <path d="M8.5 8.9c.7 0 1.3.3 1.8.7L8.5 11.6 6.7 9.6c.5-.4 1.1-.7 1.8-.7Z"></path>
+                </svg>
+                <!-- Battery Capsule -->
+                <svg width="27" height="13" viewBox="0 0 27 13">
+                  <rect x="0.5" y="0.5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity="0.4"></rect>
+                  <rect id="battery-fill" x="2" y="2" width="18" height="9" rx="2.5" fill="currentColor"></rect>
+                  <path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" fill="currentColor" fill-opacity="0.45"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Contact Header -->
+            <div class="contact-bar">
+              <div class="back-chevron">
+                <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2 2 8l6 6"/></svg>
+                <span style="font-size: 16px; margin-left: 2px;">Messages</span>
+              </div>
+              <div class="contact-center">
+                <div class="contact-avatar" id="avatar-render">
+                  <span id="avatar-initials">S</span>
+                </div>
+                <div class="contact-pill">
+                  <span id="display-contact">Sarah</span>
+                  <svg width="8" height="12" viewBox="0 0 8 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 1.5 6.5 6 2 10.5"/></svg>
+                </div>
+              </div>
+              <div style="width: 70px; display: flex; justify-content: flex-end;">
+                <!-- FaceTime Video Call Icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#027dfd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect width="15" height="14" x="1" y="5" rx="2" ry="2"/></svg>
+              </div>
+            </div>
+
+            <!-- Chat Stream -->
+            <div class="chat-stream" id="chat-stream-render">
+              <!-- Dynamically populated bubbles -->
+            </div>
+
+            <!-- Compose Bar -->
+            <div class="compose-bar">
+              <div class="compose-btn-plus">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+              <div class="compose-input-pill">
+                <span>iMessage</span>
+                <!-- Audio Wave Dictation Bars -->
+                <div style="display: flex; align-items: center; gap: 2px;">
+                  <span style="width: 2px; height: 8px; background: currentColor; border-radius: 1px;"></span>
+                  <span style="width: 2px; height: 14px; background: currentColor; border-radius: 1px;"></span>
+                  <span style="width: 2px; height: 10px; background: currentColor; border-radius: 1px;"></span>
+                  <span style="width: 2px; height: 16px; background: currentColor; border-radius: 1px;"></span>
+                  <span style="width: 2px; height: 8px; background: currentColor; border-radius: 1px;"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- iOS Home Swipe Bar -->
+            <div class="home-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: MULTI-SLIDE CAROUSEL GENERATOR -->
+      <div id="section-carousel" class="workspace" style="display: none;">
+        <!-- Left: Script Editor -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Slide Script Editor</span>
+            <span style="font-size: 12px; color: var(--muted); font-weight: normal;">Syntax: '---' for new slide</span>
+          </div>
+
+          <!-- Style Selection -->
+          <div class="row-2">
+            <div class="field-group">
+              <label class="field-label">Rendering Mode</label>
+              <select id="carousel-style" class="input-select" onchange="renderCarouselSlides()">
+                <option value="imessage-crops">iMessage Crops (TikTok 1170w)</option>
+                <option value="instagram-dm">Instagram DM (9:16 1318x2346)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Quick Presets</label>
+              <select id="carousel-preset-select" class="input-select" onchange="loadScriptPreset(this.value)">
+                <option value="storyReply">Story Reply ("Say Less")</option>
+                <option value="exText">Ex Texted Me</option>
+                <option value="binBagFox">Neighbour at 10:47 PM</option>
+                <option value="icedCoffee">Iced Coffee Debate</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Script Area -->
+          <div class="field-group">
+            <label class="field-label">Script Text</label>
+            <textarea id="carousel-script" class="input-textarea" style="min-height: 280px; font-family: monospace; font-size: 13px; line-height: 1.5;" oninput="renderCarouselSlides()"></textarea>
+          </div>
+
+          <!-- Bulk ZIP Download Button -->
+          <button type="button" class="btn-primary" onclick="downloadAllCarouselSlides()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Download All Slides (.ZIP)
+          </button>
+        </div>
+
+        <!-- Right: Slide Previews Grid -->
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3 style="font-size: 18px; font-weight: 700;">Generated Slides</h3>
+            <span id="slides-count-label" style="font-size: 13px; color: var(--muted);">0 Slides</span>
+          </div>
+          <div class="slides-grid" id="carousel-output-grid">
+            <!-- Rendered slides dynamically inserted here -->
           </div>
         </div>
       </div>
     </main>
+
+    <!-- Hidden canvas for high-res rasterization -->
+    <canvas id="export-canvas" class="hidden-canvas"></canvas>
+
+    <script>
+      // ==========================================
+      // STATE & DATA STORES
+      // ==========================================
+      let mockupState = {
+        contact: "Sarah",
+        time: "9:41",
+        battery: 88,
+        stamp: "Today 9:41 AM",
+        receipt: "delivered",
+        avatarUrl: null,
+        dark: true,
+        sms: false,
+        typing: false,
+        promo: true,
+        promoAmount: "$25",
+        promoPot: "$50 TOTAL POT",
+        promoTitle: "Will he text back within 10 minutes?",
+        messages: [
+          { from: "them", text: "Are you still awake?", reaction: "" },
+          { from: "me", text: "Unfortunately. Why, what's up?", reaction: "" },
+          { from: "them", text: "My ex just texted me 'I miss what we had'...", reaction: "‼️" },
+          { from: "me", text: "People always miss what they lost. Your phone, your call.", reaction: "❤️" }
+        ]
+      };
+
+      const PRESETS = {
+        nightIn: {
+          contact: "Jessica",
+          time: "11:24",
+          stamp: "Today 11:24 PM",
+          messages: [
+            { from: "me", text: "Say less. What time?", reaction: "" },
+            { from: "them", text: "say less to WHAT 😭", reaction: "" },
+            { from: "me", text: "Ur story said night in. So what time", reaction: "" },
+            { from: "them", text: "that's a caption not an invitation 😭", reaction: "" },
+            { from: "me", text: "Too late, already RSVP'd", reaction: "❤️" }
+          ]
+        },
+        exText: {
+          contact: "Chloe",
+          time: "8:15",
+          stamp: "Today 8:15 PM",
+          messages: [
+            { from: "them", text: "he asked if i'm free saturday...", reaction: "" },
+            { from: "me", text: "reply to him if you want. what i care about is what we're doing saturday", reaction: "" },
+            { from: "them", text: "so you don't care if i reply to him?", reaction: "" },
+            { from: "me", text: "i care. i just won't compete for you.", reaction: "🔥" }
+          ]
+        },
+        lateNight: {
+          contact: "Jay (Neighbour)",
+          time: "10:47",
+          stamp: "Today 10:47 PM",
+          messages: [
+            { from: "them", text: "You awake?", reaction: "" },
+            { from: "me", text: "unfortunately", reaction: "" },
+            { from: "them", text: "Good. Come outside right now.", reaction: "" },
+            { from: "me", text: "it's 10:47, normal people don't ask neighbours to come outside with zero explanation", reaction: "💀" },
+            { from: "them", text: "You won't die. Just come downstairs.", reaction: "" }
+          ]
+        },
+        icedCoffee: {
+          contact: "Maya",
+          time: "2:10",
+          stamp: "Today 2:10 PM",
+          messages: [
+            { from: "them", text: "did you eat today", reaction: "" },
+            { from: "me", text: "define eat", reaction: "" },
+            { from: "them", text: "that's a no", reaction: "🙄" },
+            { from: "me", text: "i had an iced coffee, it had oat milk in it so technically...", reaction: "" },
+            { from: "them", text: "I'm ordering you food. Already did.", reaction: "🥰" }
+          ]
+        }
+      };
+
+      const CAROUSEL_SCRIPTS = {
+        storyReply: `me: Say less
+me: What time?
+---
+her: say less to WHAT 😭
+---
+me: Ur story said night in
+me: So what time
+---
+her: that’s a caption not an invitation 😭
+---
+me: Too late
+me: Already RSVP’d
+---
+her: u can’t rsvp to a caption 😭
+her: and what would u even bring
+---
+me: Snacks and zero plans to leave
+---
+her: no plans to leave?? 😭
+her: bro i don’t even know u
+---
+me: Easy fix, I’m free this weekend`,
+
+        exText: `her: my ex texted me happy birthday lol
+---
+me: nice of him
+---
+her: he said he misses talking to me
+me: people miss what they lost
+---
+her: should i reply?
+me: your phone, your call
+---
+her: that's it? you don't care?
+me: didn't say that
+---
+her: he asked if i'm free saturday
+---
+me: reply to him if you want. what i care about is what we're doing saturday
+---
+her: so you don't care if i reply?
+me: i care. i just won't compete for you`,
+
+        binBagFox: `them: You awake?
+me: unfortunately
+them: Good.
+me: that's never a good sign
+---
+them: I need you to do something.
+me: oh my god here we go again
+---
+me: remember the fox?
+them: You screamed at a bin bag.
+me: because of the fox
+them: It was a bin bag.
+me: exactly, that's what made it dangerous
+---
+them: Come outside.
+me: why
+them: Just come outside.
+---
+me: it's 10:47
+them: I know.
+me: normal people don't ask neighbours to come outside at 10:47
+them: You won't die. Come downstairs.
+me: yes sir 🫡`,
+
+        icedCoffee: `them: did you eat today
+me: define eat
+them: that's a no
+---
+me: i had an iced coffee
+them: that's a drink
+me: it had oat milk in it so technically
+---
+them: I'm ordering you food.
+me: you don't have to do that
+them: Already did.
+me: okay that's actually really sweet 😭`
+      };
+
+      // ==========================================
+      // UI TAB MANAGEMENT
+      // ==========================================
+      function switchTab(tab) {
+        document.getElementById('tab-mockup').classList.toggle('active', tab === 'mockup');
+        document.getElementById('tab-carousel').classList.toggle('active', tab === 'carousel');
+        document.getElementById('section-mockup').style.display = tab === 'mockup' ? 'grid' : 'none';
+        document.getElementById('section-carousel').style.display = tab === 'carousel' ? 'grid' : 'none';
+
+        if (tab === 'carousel') {
+          if (!document.getElementById('carousel-script').value) {
+            document.getElementById('carousel-script').value = CAROUSEL_SCRIPTS.storyReply;
+          }
+          renderCarouselSlides();
+        }
+      }
+
+      // ==========================================
+      // IPHONE MOCKUP RENDER LOGIC
+      // ==========================================
+      function toggleOption(key) {
+        mockupState[key] = !mockupState[key];
+        document.getElementById(`chip-${key}`).classList.toggle('active', mockupState[key]);
+        if (key === 'promo') {
+          document.getElementById('promo-settings-box').style.display = mockupState.promo ? 'block' : 'none';
+        }
+        renderMockup();
+      }
+
+      function updateState() {
+        mockupState.contact = document.getElementById('cfg-contact').value.trim() || 'Contact';
+        mockupState.time = document.getElementById('cfg-time').value.trim() || '9:41';
+        mockupState.battery = Math.max(1, Math.min(100, parseInt(document.getElementById('cfg-battery').value) || 80));
+        mockupState.receipt = document.getElementById('cfg-receipt').value;
+        mockupState.stamp = document.getElementById('cfg-stamp').value;
+        mockupState.promoAmount = document.getElementById('cfg-promo-amount').value;
+        mockupState.promoPot = document.getElementById('cfg-promo-pot').value;
+        mockupState.promoTitle = document.getElementById('cfg-promo-title').value;
+        renderMockup();
+      }
+
+      function handleAvatarUpload(e) {
+        const file = e.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            mockupState.avatarUrl = event.target.result;
+            document.getElementById('btn-remove-avatar').style.display = 'inline-flex';
+            renderMockup();
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function removeAvatar() {
+        mockupState.avatarUrl = null;
+        document.getElementById('btn-remove-avatar').style.display = 'none';
+        document.getElementById('cfg-avatar-file').value = '';
+        renderMockup();
+      }
+
+      function addMessage(sender) {
+        mockupState.messages.push({
+          from: sender,
+          text: sender === 'me' ? 'New reply message' : 'New incoming text',
+          reaction: ''
+        });
+        renderMessageControls();
+        renderMockup();
+      }
+
+      function removeMessage(idx) {
+        mockupState.messages.splice(idx, 1);
+        renderMessageControls();
+        renderMockup();
+      }
+
+      function moveMessage(idx, delta) {
+        const target = idx + delta;
+        if (target >= 0 && target < mockupState.messages.length) {
+          const temp = mockupState.messages[idx];
+          mockupState.messages[idx] = mockupState.messages[target];
+          mockupState.messages[target] = temp;
+          renderMessageControls();
+          renderMockup();
+        }
+      }
+
+      function updateMsgText(idx, text) {
+        mockupState.messages[idx].text = text;
+        renderMockup();
+      }
+
+      function updateMsgSender(idx) {
+        mockupState.messages[idx].from = mockupState.messages[idx].from === 'me' ? 'them' : 'me';
+        renderMessageControls();
+        renderMockup();
+      }
+
+      function updateMsgReaction(idx, reaction) {
+        mockupState.messages[idx].reaction = reaction;
+        renderMockup();
+      }
+
+      function loadMockupPreset(key) {
+        const p = PRESETS[key];
+        if (!p) return;
+        mockupState.contact = p.contact;
+        mockupState.time = p.time;
+        mockupState.stamp = p.stamp;
+        mockupState.messages = JSON.parse(JSON.stringify(p.messages));
+
+        document.getElementById('cfg-contact').value = p.contact;
+        document.getElementById('cfg-time').value = p.time;
+        document.getElementById('cfg-stamp').value = p.stamp;
+
+        renderMessageControls();
+        renderMockup();
+      }
+
+      function renderMessageControls() {
+        const list = document.getElementById('messages-list');
+        list.innerHTML = '';
+        const reactions = ['', '❤️', '😂', '‼️', '❓', '👍', '👎', '🔥', '💀', '😾', '🙄'];
+
+        mockupState.messages.forEach((m, idx) => {
+          const card = document.createElement('div');
+          card.className = 'msg-card';
+          card.innerHTML = `
+            <div class="msg-header">
+              <span class="sender-badge ${m.from}" onclick="updateMsgSender(${idx})">${m.from === 'me' ? 'Me' : mockupState.contact} ⇄</span>
+              <div class="msg-actions">
+                <select class="input-select" style="padding: 2px 6px; font-size: 11px; width: 70px;" onchange="updateMsgReaction(${idx}, this.value)">
+                  ${reactions.map(r => `<option value="${r}" ${m.reaction === r ? 'selected' : ''}>${r || 'No Tap'}</option>`).join('')}
+                </select>
+                <button type="button" class="btn-icon" title="Move Up" onclick="moveMessage(${idx}, -1)">▲</button>
+                <button type="button" class="btn-icon" title="Move Down" onclick="moveMessage(${idx}, 1)">▼</button>
+                <button type="button" class="btn-icon" title="Delete" style="color: #ff6666;" onclick="removeMessage(${idx})">✕</button>
+              </div>
+            </div>
+            <textarea class="input-textarea" style="min-height: 48px; padding: 6px 10px; font-size: 13px;" oninput="updateMsgText(${idx}, this.value)">${m.text}</textarea>
+          `;
+          list.appendChild(card);
+        });
+      }
+
+      function renderMockup() {
+        const phone = document.getElementById('phone-container');
+        phone.classList.toggle('light-theme', !mockupState.dark);
+        phone.classList.toggle('sms-theme', mockupState.sms);
+
+        // Header sync
+        document.getElementById('display-time').textContent = mockupState.time;
+        document.getElementById('display-contact').textContent = mockupState.contact;
+
+        // Battery level fill
+        const fillW = Math.max(2, Math.round(18 * (mockupState.battery / 100)));
+        document.getElementById('battery-fill').setAttribute('width', fillW);
+
+        // Avatar
+        const avatarBox = document.getElementById('avatar-render');
+        if (mockupState.avatarUrl) {
+          avatarBox.innerHTML = `<img src="${mockupState.avatarUrl}" alt="${mockupState.contact}" />`;
+        } else {
+          avatarBox.innerHTML = `<span id="avatar-initials">${(mockupState.contact[0] || 'C').toUpperCase()}</span>`;
+        }
+
+        // Chat Stream
+        const stream = document.getElementById('chat-stream-render');
+        let html = '';
+
+        if (mockupState.stamp) {
+          html += `<div class="date-separator">${escapeHtml(mockupState.stamp)}</div>`;
+        }
+
+        mockupState.messages.forEach(m => {
+          html += `
+            <div class="bubble-wrapper ${m.from}">
+              ${m.reaction ? `<div class="tapback-badge">${m.reaction}</div>` : ''}
+              <div class="bubble">${escapeHtml(m.text)}</div>
+            </div>
+          `;
+        });
+
+        // Typing bubble
+        if (mockupState.typing) {
+          html += `
+            <div class="typing-bubble">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          `;
+        }
+
+        // Promo sponsor card
+        if (mockupState.promo) {
+          html += `
+            <div class="promo-sponsor-card">
+              <div class="promo-body">
+                <div class="promo-logo">B</div>
+                <div class="promo-amount">${escapeHtml(mockupState.promoAmount || '$25')}</div>
+                <div class="promo-pot">${escapeHtml(mockupState.promoPot || '$50 TOTAL POT')}</div>
+                <div class="promo-title">${escapeHtml(mockupState.promoTitle)}</div>
+                <div class="promo-cta-pill">Tap to Accept ›</div>
+              </div>
+              <div class="promo-footer-banner">
+                ${escapeHtml(mockupState.promoAmount || '$25')} prediction · Tap to Accept
+              </div>
+            </div>
+          `;
+        }
+
+        // Delivery receipt
+        if (mockupState.receipt === 'delivered') {
+          html += `<div class="delivery-receipt">Delivered</div>`;
+        } else if (mockupState.receipt === 'read') {
+          html += `<div class="delivery-receipt">Read ${escapeHtml(mockupState.time)}</div>`;
+        }
+
+        stream.innerHTML = html;
+        stream.scrollTop = stream.scrollHeight;
+      }
+
+      function escapeHtml(str) {
+        return (str || '').replace(/[&<>"']/g, m => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m]);
+      }
+
+      // ==========================================
+      // HIGH-RES PNG EXPORT ENGINE
+      // ==========================================
+      async function exportMockupPNG() {
+        const canvas = document.getElementById('export-canvas');
+        const ctx = canvas.getContext('2d');
+        const scale = 3; // Ultra high-res 1170 x 2532 retina canvas
+        canvas.width = 390 * scale;
+        canvas.height = 844 * scale;
+
+        ctx.scale(scale, scale);
+
+        // Background
+        ctx.fillStyle = mockupState.dark ? '#000000' : '#ffffff';
+        ctx.fillRect(0, 0, 390, 844);
+
+        // Status Bar text
+        ctx.fillStyle = mockupState.dark ? '#ffffff' : '#000000';
+        ctx.font = '600 15px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.fillText(mockupState.time, 28, 36);
+
+        // Signal bars
+        const ink = mockupState.dark ? '#ffffff' : '#000000';
+        ctx.fillStyle = ink;
+        const heights = [4, 6.5, 9, 12];
+        heights.forEach((h, i) => {
+          ctx.beginPath();
+          roundRect(ctx, 300 + i * 5, 38 - h, 3.2, h, 1);
+          ctx.fill();
+        });
+
+        // Battery outer & inner
+        ctx.strokeStyle = ink;
+        ctx.globalAlpha = 0.4;
+        ctx.lineWidth = 1;
+        roundRect(ctx, 335, 27, 23, 12, 3.8);
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+
+        const bW = Math.max(2, Math.round(18 * (mockupState.battery / 100)));
+        roundRect(ctx, 337, 29, bW, 8, 2.5);
+        ctx.fill();
+
+        // Contact Header
+        ctx.textAlign = 'center';
+        ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.fillText(mockupState.contact, 195, 114);
+
+        // Avatar circle
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(195, 78, 24, 0, Math.PI * 2);
+        ctx.clip();
+        if (mockupState.avatarUrl) {
+          const img = new Image();
+          img.src = mockupState.avatarUrl;
+          await new Promise(r => { img.onload = r; img.onerror = r; });
+          ctx.drawImage(img, 171, 54, 48, 48);
+        } else {
+          ctx.fillStyle = '#858c99';
+          ctx.fillRect(171, 54, 48, 48);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '600 20px -apple-system, sans-serif';
+          ctx.fillText((mockupState.contact[0] || 'C').toUpperCase(), 195, 85);
+        }
+        ctx.restore();
+
+        // Back Chevron
+        ctx.strokeStyle = '#027dfd';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(24, 76);
+        ctx.lineTo(18, 82);
+        ctx.lineTo(24, 88);
+        ctx.stroke();
+
+        ctx.fillStyle = '#027dfd';
+        ctx.textAlign = 'left';
+        ctx.font = '400 16px -apple-system, sans-serif';
+        ctx.fillText('Messages', 30, 87);
+
+        // Date Stamp
+        let currentY = 145;
+        if (mockupState.stamp) {
+          ctx.fillStyle = '#8e8e93';
+          ctx.font = '600 11.5px -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(mockupState.stamp, 195, currentY);
+          currentY += 24;
+        }
+
+        // Render Bubbles
+        ctx.textAlign = 'left';
+        for (const m of mockupState.messages) {
+          const isMe = m.from === 'me';
+          ctx.font = '400 16px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+          const maxTextW = 220;
+          const lines = wrapText(ctx, m.text, maxTextW);
+          const bubbleW = Math.min(260, Math.max(...lines.map(l => ctx.measureText(l).width)) + 30);
+          const bubbleH = lines.length * 21 + 18;
+
+          const x = isMe ? 390 - 16 - bubbleW : 16;
+          const y = currentY;
+
+          // Bubble background
+          ctx.beginPath();
+          roundRect(ctx, x, y, bubbleW, bubbleH, 18);
+          if (isMe) {
+            ctx.fillStyle = mockupState.sms ? '#34c759' : '#027dfd';
+          } else {
+            ctx.fillStyle = mockupState.dark ? '#303033' : '#e9e9eb';
+          }
+          ctx.fill();
+
+          // Bubble text
+          ctx.fillStyle = isMe || mockupState.dark ? '#ffffff' : '#000000';
+          lines.forEach((line, lIdx) => {
+            ctx.fillText(line, x + 15, y + 21 + lIdx * 21);
+          });
+
+          // Tapback reaction badge
+          if (m.reaction) {
+            const badgeX = isMe ? x - 8 : x + bubbleW - 16;
+            ctx.fillStyle = mockupState.dark ? '#2c2c2e' : '#e5e5ea';
+            roundRect(ctx, badgeX, y - 8, 26, 22, 11);
+            ctx.fill();
+            ctx.font = '14px sans-serif';
+            ctx.fillText(m.reaction, badgeX + 5, y + 8);
+          }
+
+          currentY += bubbleH + 10;
+        }
+
+        // Promo Sponsor Card
+        if (mockupState.promo) {
+          const cardW = 290;
+          const cardH = 150;
+          const cardX = 390 - 16 - cardW;
+          const cardY = currentY;
+
+          // Card Background
+          ctx.save();
+          ctx.beginPath();
+          roundRect(ctx, cardX, cardY, cardW, cardH, 20);
+          ctx.clip();
+
+          const grad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
+          grad.addColorStop(0, '#c8b3f4');
+          grad.addColorStop(0.45, '#b7bdf8');
+          grad.addColorStop(1, '#9fcaf9');
+          ctx.fillStyle = grad;
+          ctx.fillRect(cardX, cardY, cardW, cardH);
+
+          // Card Elements
+          ctx.fillStyle = '#161a3a';
+          ctx.font = '800 38px -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(mockupState.promoAmount || '$25', cardX + cardW / 2, cardY + 44);
+
+          ctx.font = '700 11px -apple-system, sans-serif';
+          ctx.fillText(mockupState.promoPot || '$50 TOTAL POT', cardX + cardW / 2, cardY + 58);
+
+          ctx.font = '700 13px -apple-system, sans-serif';
+          ctx.fillText(mockupState.promoTitle, cardX + cardW / 2, cardY + 80);
+
+          // White pill
+          ctx.fillStyle = '#ffffff';
+          roundRect(ctx, cardX + 30, cardY + 92, cardW - 60, 22, 11);
+          ctx.fill();
+          ctx.fillStyle = '#161a3a';
+          ctx.font = '700 11.5px -apple-system, sans-serif';
+          ctx.fillText('Tap to Accept ›', cardX + cardW / 2, cardY + 107);
+
+          // Dark footer banner
+          ctx.fillStyle = '#16171c';
+          ctx.fillRect(cardX, cardY + cardH - 28, cardW, 28);
+          ctx.fillStyle = '#ffffff';
+          ctx.textAlign = 'left';
+          ctx.font = '700 10px -apple-system, sans-serif';
+          ctx.fillText(`${mockupState.promoAmount || '$25'} prediction · Tap to Accept`, cardX + 12, cardY + cardH - 10);
+
+          ctx.restore();
+          currentY += cardH + 6;
+        }
+
+        // Delivery receipt
+        if (mockupState.receipt !== 'none') {
+          ctx.fillStyle = '#8e8e93';
+          ctx.font = '400 11px -apple-system, sans-serif';
+          ctx.textAlign = 'right';
+          const rText = mockupState.receipt === 'read' ? `Read ${mockupState.time}` : 'Delivered';
+          ctx.fillText(rText, 390 - 20, currentY + 10);
+        }
+
+        // Bottom Home bar
+        ctx.fillStyle = mockupState.dark ? '#ffffff' : '#000000';
+        roundRect(ctx, 128, 830, 134, 5, 2.5);
+        ctx.fill();
+
+        // Convert canvas to download link
+        canvas.toBlob(blob => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `dm-screenshot-${Date.now()}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }, 'image/png');
+      }
+
+      function roundRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+      }
+
+      function wrapText(ctx, text, maxWidth) {
+        const words = (text || '').split(' ');
+        const lines = [];
+        let curLine = '';
+        for (const w of words) {
+          const test = curLine ? curLine + ' ' + w : w;
+          if (ctx.measureText(test).width <= maxWidth) {
+            curLine = test;
+          } else {
+            if (curLine) lines.push(curLine);
+            curLine = w;
+          }
+        }
+        if (curLine) lines.push(curLine);
+        return lines.length ? lines : [''];
+      }
+
+      // ==========================================
+      // MULTI-SLIDE CAROUSEL ENGINE
+      // ==========================================
+      let parsedSlidesData = [];
+
+      function loadScriptPreset(key) {
+        const text = CAROUSEL_SCRIPTS[key];
+        if (text) {
+          document.getElementById('carousel-script').value = text;
+          renderCarouselSlides();
+        }
+      }
+
+      function parseScriptText(raw) {
+        const blocks = raw.split(/\n\s*---\s*\n/);
+        const accumulated = [];
+        const slides = [];
+
+        blocks.forEach((blk, idx) => {
+          const lines = blk.trim().split('\n');
+          lines.forEach(line => {
+            const trim = line.trim();
+            if (!trim) return;
+            if (/^(me):/i.test(trim)) {
+              accumulated.push({ from: 'me', text: trim.replace(/^me:\s*/i, '') });
+            } else if (/^(them|her|him|she|he):/i.test(trim)) {
+              accumulated.push({ from: 'them', text: trim.replace(/^[a-z]+:\s*/i, '') });
+            }
+          });
+          slides.push([...accumulated]);
+        });
+
+        return slides;
+      }
+
+      function renderCarouselSlides() {
+        const raw = document.getElementById('carousel-script').value;
+        const style = document.getElementById('carousel-style').value;
+        const slides = parseScriptText(raw);
+        parsedSlidesData = slides;
+
+        const grid = document.getElementById('carousel-output-grid');
+        grid.innerHTML = '';
+        document.getElementById('slides-count-label').textContent = `${slides.length} ${slides.length === 1 ? 'Slide' : 'Slides'}`;
+
+        slides.forEach((slideMessages, idx) => {
+          const card = document.createElement('div');
+          card.className = 'slide-card';
+
+          const canvasBox = document.createElement('div');
+          canvasBox.className = 'slide-canvas-box';
+
+          const canvas = document.createElement('canvas');
+          drawSingleSlideCanvas(canvas, slideMessages, style);
+          canvasBox.appendChild(canvas);
+
+          const footer = document.createElement('div');
+          footer.className = 'slide-card-footer';
+          footer.innerHTML = `
+            <span class="slide-badge">Slide ${idx + 1}</span>
+            <button type="button" class="btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="downloadSlidePNG(${idx})">
+              Download PNG
+            </button>
+          `;
+
+          card.appendChild(canvasBox);
+          card.appendChild(footer);
+          grid.appendChild(card);
+        });
+      }
+
+      function drawSingleSlideCanvas(canvas, messages, style) {
+        const ctx = canvas.getContext('2d');
+        const isInstagram = style === 'instagram-dm';
+
+        if (isInstagram) {
+          // Instagram 9:16 high-res (659 x 1173 preview, 1318 x 2346 full)
+          canvas.width = 659;
+          canvas.height = 1173;
+          ctx.scale(0.5, 0.5);
+
+          // Full background
+          ctx.fillStyle = 'rgb(11, 15, 24)';
+          ctx.fillRect(0, 0, 1318, 2346);
+
+          // Story reply bar
+          ctx.fillStyle = 'rgb(150, 155, 163)';
+          ctx.font = '500 34px -apple-system, sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText('You replied to their story', 1245, 110);
+
+          // Story Thumbnail Box
+          ctx.fillStyle = 'rgb(35, 39, 48)';
+          roundRect(ctx, 860, 140, 376, 668, 62);
+          ctx.fill();
+          ctx.fillStyle = 'rgb(150, 155, 163)';
+          ctx.textAlign = 'center';
+          ctx.font = '600 32px -apple-system, sans-serif';
+          ctx.fillText('Story picture', 1048, 480);
+
+          // Messages
+          let curY = 880;
+          ctx.textAlign = 'left';
+          messages.forEach(m => {
+            const isMe = m.from === 'me';
+            ctx.font = '500 52px -apple-system, sans-serif';
+            const lines = wrapText(ctx, m.text, 800);
+            const w = Math.min(1000, Math.max(...lines.map(l => ctx.measureText(l).width)) + 80);
+            const h = lines.length * 68 + 60;
+            const x = isMe ? 1318 - 40 - w : 40;
+
+            ctx.beginPath();
+            roundRect(ctx, x, curY, w, h, 42);
+            if (isMe) {
+              const grad = ctx.createLinearGradient(0, curY, 0, curY + h);
+              grad.addColorStop(0, 'rgb(114, 58, 243)');
+              grad.addColorStop(1, 'rgb(100, 66, 248)');
+              ctx.fillStyle = grad;
+            } else {
+              ctx.fillStyle = 'rgb(35, 39, 48)';
+            }
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            lines.forEach((l, i) => {
+              ctx.fillText(l, x + 40, curY + 68 + i * 68);
+            });
+
+            curY += h + 24;
+          });
+        } else {
+          // iMessage Crops (1170px width tight crop)
+          canvas.width = 585;
+          ctx.scale(0.5, 0.5);
+
+          // Calculate height
+          ctx.font = '500 48px -apple-system, sans-serif';
+          let totalH = 80;
+          const bubbleData = messages.map(m => {
+            const lines = wrapText(ctx, m.text, 720);
+            const bw = Math.min(880, Math.max(...lines.map(l => ctx.measureText(l).width)) + 76);
+            const bh = lines.length * 60 + 56;
+            totalH += bh + 24;
+            return { from: m.from, lines, bw, bh };
+          });
+
+          canvas.height = Math.round(Math.max(400, totalH) * 0.5);
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, 1170, Math.max(400, totalH));
+
+          let curY = 50;
+          bubbleData.forEach(b => {
+            const isMe = b.from === 'me';
+            const x = isMe ? 1170 - 48 - b.bw : 48;
+            ctx.beginPath();
+            roundRect(ctx, x, curY, b.bw, b.bh, 38);
+            ctx.fillStyle = isMe ? 'rgb(0, 169, 252)' : 'rgb(44, 44, 46)';
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            b.lines.forEach((l, i) => {
+              ctx.fillText(l, x + 38, curY + 58 + i * 60);
+            });
+
+            curY += b.bh + 24;
+          });
+        }
+      }
+
+      function downloadSlidePNG(idx) {
+        const grid = document.getElementById('carousel-output-grid');
+        const card = grid.children[idx];
+        if (!card) return;
+        const canvas = card.querySelector('canvas');
+        if (!canvas) return;
+
+        canvas.toBlob(blob => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `slide-${idx + 1}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }, 'image/png');
+      }
+
+      async function downloadAllCarouselSlides() {
+        if (!window.JSZip) {
+          alert('JSZip library loading, please try again in a moment.');
+          return;
+        }
+        if (!parsedSlidesData.length) {
+          alert('Please enter or load a script to generate slides.');
+          return;
+        }
+
+        const zip = new JSZip();
+        const grid = document.getElementById('carousel-output-grid');
+
+        for (let i = 0; i < grid.children.length; i++) {
+          const card = grid.children[i];
+          const canvas = card.querySelector('canvas');
+          if (canvas) {
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const arrayBuffer = await blob.arrayBuffer();
+            zip.file(`slide-${String(i + 1).padStart(2, '0')}.png`, arrayBuffer);
+          }
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dm-slideshow-${Date.now()}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+
+      // ==========================================
+      // INITIALIZATION
+      // ==========================================
+      window.addEventListener('DOMContentLoaded', () => {
+        renderMessageControls();
+        renderMockup();
+      });
+    </script>
   </body>
 </html>
