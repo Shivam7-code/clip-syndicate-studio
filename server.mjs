@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3000;
 const UPSTREAM = 'https://rizzmentaltemplate.vercel.app';
 const UPSTREAM_SESSION = 'rizz_session=1795237032.VgBlsseSrHH9dlENFdNabGLWEF2r1JF-XiYF-7lZJiQ';
-const VALID_PASSWORD = 'Clip_Syndicate@03';
+const VALID_PASSWORD = process.env.PASSWORD || 'Clip_Syndicate@03';
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -86,8 +86,8 @@ export async function handleRequest(req, res) {
   // API Routes
   if (pathname === '/api/login' && req.method === 'POST') {
     const body = await readBody(req);
-    const pass = body.password || body.passcode || body.code;
-    if (pass === VALID_PASSWORD) {
+    const pass = (body.password || body.passcode || body.code || '').trim();
+    if (pass === VALID_PASSWORD.trim()) {
       const sessionVal = '1795237032.VgBlsseSrHH9dlENFdNabGLWEF2r1JF-XiYF-7lZJiQ';
       res.writeHead(200, {
         'Content-Type': 'application/json',
