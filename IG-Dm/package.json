@@ -1,0 +1,22 @@
+{
+  "name": "ig-dm",
+  "version": "1.0.0",
+  "description": "Instagram DM Slideshow Studio - High-resolution viral story slides generator reverse-engineered from Slideshows.gg",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "keywords": [
+    "instagram",
+    "dm",
+    "slideshow",
+    "generator",
+    "canvas",
+    "promo",
+    "tiktok"
+  ],
+  "author": "Antigravity REA Engine",
+  "license": "ISC"
+}

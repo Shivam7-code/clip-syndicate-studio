@@ -849,6 +849,10 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 8 3 4-3 4"/></svg>
             Multi-Slide Carousel
           </button>
+          <button type="button" class="tab-btn" id="tab-igdm" onclick="switchTab('igdm')" style="color: #ff6666; font-weight: 700;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            Instagram DM (IG-Dm)
+          </button>
         </div>
       </div>
 
@@ -1117,6 +1121,92 @@
           </div>
         </div>
       </div>
+
+      <!-- TAB 3: INSTAGRAM DM (IG-DM) STUDIO -->
+      <div id="section-igdm" class="workspace" style="display: none;">
+        <!-- Left: Inspector & Controls -->
+        <div class="panel">
+          <div class="panel-title">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <img src="/brand/instagram.png" alt="Instagram" style="width: 22px; height: 22px; border-radius: 6px;" />
+              <span>Instagram DM Studio</span>
+            </div>
+            <button type="button" class="btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="resetIgDm()">Reset Example</button>
+          </div>
+
+          <!-- Look Selection (Full screen vs Close-up) -->
+          <div class="field-group">
+            <label class="field-label">Look</label>
+            <div class="row-2">
+              <button type="button" id="btn-ig-look-full" class="btn-outline active" style="padding: 8px; font-size: 13px;" onclick="setIgLook('full')">Full screen (9:16)</button>
+              <button type="button" id="btn-ig-look-closeup" class="btn-outline" style="padding: 8px; font-size: 13px;" onclick="setIgLook('closeup')">Close-up (Crop)</button>
+            </div>
+            <p id="ig-look-desc" style="font-size: 12px; color: var(--muted); margin-top: 2px;">
+              One beat per slide, centred on a black 9:16 frame (1318 × 2346 PNGs).
+            </p>
+          </div>
+
+          <!-- Script Area -->
+          <div class="field-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="field-label">Chat Script</label>
+              <span style="font-size: 11.5px; color: var(--muted);">me: / her: / story: / ---</span>
+            </div>
+            <textarea id="ig-chat-script" class="input-textarea" style="min-height: 280px; font-family: monospace; font-size: 13px; line-height: 1.55;" oninput="renderIgDmSlides()"></textarea>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-outline" style="padding: 7px 14px; font-size: 12.5px;" onclick="addIgSlideDelimiter()">
+              + New slide
+            </button>
+            <button type="button" class="btn-outline" style="padding: 7px 14px; font-size: 12.5px;" onclick="loadNextIgExample()">
+              🎲 Load an example
+            </button>
+          </div>
+
+          <!-- Story Reply Picture Uploader -->
+          <div class="field-group" style="padding-top: 14px; border-top: 1px solid var(--border);">
+            <label class="field-label">Story Reply Picture</label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <img id="ig-story-thumb" src="/promo/ig-story-example.jpg" alt="Story preview" style="width: 34px; height: 56px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border);" />
+              <label class="btn-outline" style="cursor: pointer; padding: 7px 14px; font-size: 12.5px;">
+                <span>Change picture</span>
+                <input type="file" id="ig-story-file-input" accept="image/png,image/jpeg,image/webp" style="display: none;" onchange="handleIgStoryUpload(event)" />
+              </label>
+              <button type="button" id="btn-remove-ig-story" class="btn-outline" style="padding: 7px 10px; color: var(--muted);" onclick="removeIgStoryPicture()" title="Remove story picture">
+                ✕
+              </button>
+            </div>
+            <p style="font-size: 11.5px; color: var(--muted); margin-top: 4px;">
+              Goes where you write <code style="color: #fff; font-family: monospace;">story:</code>, under "You replied to their story". Use a 9:16 picture.
+            </p>
+          </div>
+
+          <!-- Validation Warning Box -->
+          <div id="ig-warning-box" style="display: none; padding: 10px 12px; background: rgba(255, 50, 50, 0.12); border: 1px solid rgba(255, 60, 60, 0.3); border-radius: 10px; font-size: 12px; color: #ff6666;">
+          </div>
+
+          <!-- Bulk ZIP Download Button -->
+          <button type="button" id="btn-ig-download-all" class="btn-primary" onclick="downloadAllIgSlides()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span id="ig-download-label">Download All Slides (.ZIP)</span>
+          </button>
+        </div>
+
+        <!-- Right: Slide Previews Grid -->
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 id="ig-slides-count-label" style="font-size: 18px; font-weight: 700;">17 Slides</h3>
+              <p id="ig-slides-sublabel" style="font-size: 12.5px; color: var(--muted);">1318 × 2346 PNGs, the size of the original post. Free, no credits.</p>
+            </div>
+          </div>
+          <div class="slides-grid" id="ig-output-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));">
+            <!-- Rendered Instagram DM slides dynamically inserted here -->
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- Hidden canvas for high-res rasterization -->
@@ -1286,14 +1376,21 @@ me: okay that's actually really sweet 😭`
       function switchTab(tab) {
         document.getElementById('tab-mockup').classList.toggle('active', tab === 'mockup');
         document.getElementById('tab-carousel').classList.toggle('active', tab === 'carousel');
+        document.getElementById('tab-igdm').classList.toggle('active', tab === 'igdm');
         document.getElementById('section-mockup').style.display = tab === 'mockup' ? 'grid' : 'none';
         document.getElementById('section-carousel').style.display = tab === 'carousel' ? 'grid' : 'none';
+        document.getElementById('section-igdm').style.display = tab === 'igdm' ? 'grid' : 'none';
 
         if (tab === 'carousel') {
           if (!document.getElementById('carousel-script').value) {
             document.getElementById('carousel-script').value = CAROUSEL_SCRIPTS.storyReply;
           }
           renderCarouselSlides();
+        } else if (tab === 'igdm') {
+          if (!document.getElementById('ig-chat-script').value) {
+            document.getElementById('ig-chat-script').value = IG_EXAMPLES[0].script;
+          }
+          renderIgDmSlides();
         }
       }
 
@@ -1984,11 +2081,669 @@ me: okay that's actually really sweet 😭`
       }
 
       // ==========================================
+      // INSTAGRAM DM (IG-DM) STUDIO ENGINE
+      // ==========================================
+      const IG_EXAMPLES = [
+        {
+          look: "full",
+          story: "/promo/ig-story-example.jpg",
+          script: `story:
+me: Say less
+me: What time?
+---
+her: say less to WHAT 😭
+---
+me: Ur story said night in
+me: So what time
+---
+her: that’s a caption not an invitation 😭
+---
+me: Too late
+me: Already RSVP’d
+---
+her: u can’t rsvp to a caption 😭
+her: and what would u even bring
+---
+me: Snacks and zero plans to leave
+---
+her: no plans to leave?? 😭
+her: bro i don’t even know u
+---
+me: Easy fix, I’m free this weekend
+her: night in was gonna be me and my blanket 😭
+---
+me: That blanket big enough for two
+me: We could both be under it
+---
+her: hmm 👀
+her: and when is this supposed to happen
+---
+me: Saturday
+---
+her: don’t u hoop wit ur boys on saturdays 👀
+---
+me: Ball can wait
+me: U can’t
+---
+her: omg 😭
+her: u’d really curve the boys for me
+---
+me: Already did
+me: Told em I’m sick
+---
+her: bro it’s jay 😭
+her: u just told the gc ur sick
+her: screenshotted everything btw 💀`
+        },
+        {
+          look: "closeup",
+          story: null,
+          script: `her: my ex texted me happy birthday lol
+---
+me: nice of him
+---
+her: he said he misses talking to me
+me: people miss what they lost
+---
+her: should i reply?
+me: your phone, your call
+---
+her: that's it? you don't care?
+me: didn't say that
+---
+her: you're being so quiet
+me: i'm reading
+---
+her: are you jealous or something
+me: should i be?
+---
+her: he asked if i'm free saturday
+---
+me: reply to him if you want. what i care about is what we're doing saturday
+---
+her: so you don't care if i reply?
+me: i care. i just won't compete for you
+---
+her: stop being dramatic. a little jealousy is cute
+me: then i'm out
+---
+her: what?
+me: saturday's canceled.`
+        }
+      ];
+
+      const igDmState = {
+        exampleIdx: 0,
+        look: "full",
+        storyUrl: "/promo/ig-story-example.jpg",
+        storyImage: null,
+        script: IG_EXAMPLES[0].script,
+        specs: [],
+        parsed: null
+      };
+
+      function loadIgStoryImage(url) {
+        if (!url) {
+          igDmState.storyImage = null;
+          renderIgDmSlides();
+          return;
+        }
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          igDmState.storyImage = img;
+          renderIgDmSlides();
+        };
+        img.onerror = () => {
+          igDmState.storyImage = null;
+          renderIgDmSlides();
+        };
+        img.src = url;
+      }
+
+      function igSmartQuotes(text) {
+        if (!text) return "";
+        return text.replace(/"([^"]*)"/g, "“$1”").replace(/'/g, "’");
+      }
+
+      function igParseScript(scriptText) {
+        const slides = [];
+        const skipped = [];
+        let currentItems = [];
+        let lastSender = null;
+        let hasStory = false;
+
+        const flush = () => {
+          if (currentItems.length > 0) {
+            slides.push({ items: [...currentItems] });
+            currentItems = [];
+          }
+        };
+
+        const lines = (scriptText || "").split(/\r?\n/);
+        lines.forEach((line, index) => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
+
+          if (/^-{3,}$/.test(trimmed)) {
+            flush();
+            return;
+          }
+
+          if (/^\[?story\]?\s*:?$/i.test(trimmed)) {
+            currentItems.push({ from: "story" });
+            hasStory = true;
+            return;
+          }
+
+          const match = /^([^:\s]{1,20})\s*:\s*(.*)$/.exec(trimmed);
+          if (match && match[2].trim()) {
+            lastSender = match[1].toLowerCase() === "me" ? "me" : "them";
+            currentItems.push({
+              from: lastSender,
+              text: igSmartQuotes(match[2].trim().slice(0, 400))
+            });
+            return;
+          }
+
+          if (lastSender && !match) {
+            currentItems.push({
+              from: lastSender,
+              text: igSmartQuotes(trimmed.slice(0, 400))
+            });
+          } else {
+            skipped.push(index + 1);
+          }
+        });
+
+        flush();
+
+        return {
+          slides: slides.slice(0, 60),
+          skipped,
+          hasStory
+        };
+      }
+
+      function buildIgSlideSpecs() {
+        const parsed = igParseScript(igDmState.script);
+        igDmState.parsed = parsed;
+        const { slides } = parsed;
+        if (!slides || !slides.length) return [];
+
+        const allItems = slides.flatMap(s => s.items);
+        const slideIndices = slides.flatMap((s, idx) => s.items.map(() => idx));
+
+        const isCloseup = igDmState.look === "closeup";
+        const scale = isCloseup ? 1.18 : 1.0;
+        const s = v => Math.trunc(v * scale);
+
+        const geom = {
+          text: {
+            size: s(65),
+            emoji: s(82),
+            line: s(86)
+          },
+          padX: s(54),
+          padTop: s(46),
+          padBottom: s(49),
+          rBig: s(84),
+          rSmall: s(16),
+          margin: isCloseup ? 8 : 17,
+          sameGap: s(11),
+          diffGap: s(53),
+          maxW: 1150
+        };
+
+        const drawElements = [];
+        let curY = 40;
+        let prevSender = null;
+
+        allItems.forEach((item, idx) => {
+          if (item.from === "story") {
+            const topY = curY;
+            const bottomY = topY + 74 + 668;
+            drawElements.push({
+              from: "story",
+              top: topY,
+              bottom: bottomY,
+              paint(ctx) {
+                ctx.fillStyle = "rgb(150, 155, 163)";
+                ctx.font = "500 50px -apple-system, sans-serif";
+                ctx.textAlign = "right";
+                ctx.fillText("You replied to their story", 1245, topY + 48);
+
+                const cardY = topY + 74;
+                ctx.save();
+                ctx.beginPath();
+                roundRect(ctx, 860, cardY, 376, 668, 62);
+                ctx.clip();
+                if (igDmState.storyImage) {
+                  const img = igDmState.storyImage;
+                  const sW = img.naturalWidth || img.width;
+                  const sH = img.naturalHeight || img.height;
+                  const sc = Math.max(376 / sW, 668 / sH);
+                  const cw = 376 / sc;
+                  const ch = 668 / sc;
+                  ctx.drawImage(img, (sW - cw) / 2, (sH - ch) / 2, cw, ch, 860, cardY, 376, 668);
+                } else {
+                  ctx.fillStyle = "rgb(35, 39, 48)";
+                  ctx.fillRect(860, cardY, 376, 668);
+                  ctx.fillStyle = "rgb(150, 155, 163)";
+                  ctx.textAlign = "center";
+                  ctx.font = "600 34px -apple-system, sans-serif";
+                  ctx.fillText("Story picture", 860 + 188, cardY + 346);
+                }
+                ctx.restore();
+
+                // Vertical accent bar
+                ctx.beginPath();
+                roundRect(ctx, 1287, cardY + 2, 14, 666, 7);
+                ctx.fillStyle = "rgb(36, 41, 45)";
+                ctx.fill();
+              }
+            });
+
+            curY = bottomY + 34;
+            prevSender = "me";
+            return;
+          }
+
+          if (prevSender !== null && item.from !== prevSender) {
+            curY += geom.diffGap - geom.sameGap;
+          }
+
+          const prevSame = allItems[idx - 1]?.from === item.from;
+          const nextSame = allItems[idx + 1]?.from === item.from;
+
+          // Wrap text
+          const measureCtx = document.createElement("canvas").getContext("2d");
+          measureCtx.font = `${geom.text.size}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
+          const lines = wrapText(measureCtx, item.text, geom.maxW - 2 * geom.padX);
+          const maxLineW = Math.max(...lines.map(l => measureCtx.measureText(l).width));
+          const bubbleW = Math.trunc(maxLineW + 2 * geom.padX);
+          const bubbleH = geom.padTop + geom.padBottom + geom.text.line * lines.length - 12;
+
+          const isMe = item.from === "me";
+          const bubbleX = isMe ? 1318 - geom.margin - bubbleW : geom.margin;
+
+          const f = Math.min(geom.rBig, Math.floor(bubbleH / 2) - 2);
+          const xR = prevSame ? geom.rSmall : f;
+          const bR = nextSame ? geom.rSmall : f;
+          const radii = isMe ? [f, xR, bR, f] : [xR, f, f, bR];
+          const topY = curY;
+
+          drawElements.push({
+            from: item.from,
+            top: topY,
+            bottom: topY + bubbleH,
+            paint(ctx) {
+              ctx.beginPath();
+              roundRect(ctx, bubbleX, topY, bubbleW, bubbleH, radii[0]);
+              if (isMe) {
+                const grad = ctx.createLinearGradient(0, 400, 0, 1900);
+                grad.addColorStop(0, "rgb(114, 58, 243)");
+                grad.addColorStop(1, "rgb(100, 66, 248)");
+                ctx.fillStyle = grad;
+              } else {
+                ctx.fillStyle = "rgb(35, 39, 48)";
+              }
+              ctx.fill();
+
+              ctx.fillStyle = "#ffffff";
+              ctx.font = `${geom.text.size}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
+              ctx.textAlign = "left";
+
+              const textY = topY + (bubbleH - (lines.length - 1) * geom.text.line) / 2 + 20;
+              lines.forEach((l, lIdx) => {
+                ctx.fillText(l, bubbleX + geom.padX, textY + lIdx * geom.text.line);
+              });
+            }
+          });
+
+          curY = topY + bubbleH + geom.sameGap;
+          prevSender = item.from;
+        });
+
+        // Generate Slide Specs
+        const specs = [];
+        slides.forEach((_, slideIdx) => {
+          const firstIdx = slideIndices.indexOf(slideIdx);
+          const lastIdx = slideIndices.lastIndexOf(slideIdx);
+          if (firstIdx < 0) return;
+
+          const activeElements = drawElements.slice(0, lastIdx + 1);
+
+          if (igDmState.look === "full") {
+            const topOffset = firstIdx === 0 ? 0 : drawElements[firstIdx - 1].top - 90;
+            const bottomLimit = drawElements[lastIdx].bottom + 46;
+            const contentHeight = bottomLimit - topOffset;
+            const scaleFit = Math.min(1.0, 2346 / contentHeight);
+
+            specs.push({
+              width: 1318,
+              height: 2346,
+              draw(ctx) {
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(0, 0, 1318, 2346);
+
+                ctx.save();
+                const offsetX = (1318 - 1318 * scaleFit) / 2;
+                const offsetY = Math.floor((2346 - contentHeight * scaleFit) / 2);
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scaleFit, scaleFit);
+
+                ctx.beginPath();
+                ctx.rect(0, 0, 1318, contentHeight);
+                ctx.clip();
+
+                ctx.fillStyle = "rgb(11, 15, 24)";
+                ctx.fillRect(0, 0, 1318, contentHeight);
+
+                ctx.translate(0, -topOffset);
+
+                for (const el of activeElements) {
+                  if (el.bottom > topOffset && el.top < bottomLimit) {
+                    el.paint(ctx);
+                  }
+                }
+                ctx.restore();
+              }
+            });
+          } else {
+            // Closeup mode
+            const anchorIdx =
+              allItems[firstIdx]?.from === "me" && firstIdx > 0 && allItems[firstIdx - 1]?.from !== "story"
+                ? firstIdx - 1
+                : firstIdx;
+            const prevBottom = anchorIdx > 0 ? drawElements[anchorIdx - 1].bottom : 0;
+            const nextTop =
+              lastIdx + 1 < drawElements.length
+                ? drawElements[lastIdx + 1].top
+                : drawElements[lastIdx].bottom + 200;
+
+            const cropTop = Math.max(0, prevBottom + 6, drawElements[anchorIdx].top - 50);
+            const cropBottom = Math.min(nextTop - 6, drawElements[lastIdx].bottom + 50);
+            const cropHeight = cropBottom - cropTop;
+            const targetHeight = Math.round((828 * cropHeight) / 1318);
+
+            specs.push({
+              width: 828,
+              height: targetHeight,
+              draw(ctx) {
+                ctx.fillStyle = "rgb(11, 15, 24)";
+                ctx.fillRect(0, 0, 828, targetHeight);
+
+                ctx.save();
+                ctx.scale(828 / 1318, targetHeight / cropHeight);
+                ctx.translate(0, -cropTop);
+
+                for (const el of activeElements) {
+                  if (el.bottom > cropTop && el.top < cropBottom) {
+                    el.paint(ctx);
+                  }
+                }
+                ctx.restore();
+              }
+            });
+          }
+        });
+
+        return specs;
+      }
+
+      function renderIgDmSlides() {
+        const textarea = document.getElementById("ig-chat-script");
+        if (textarea) igDmState.script = textarea.value;
+
+        const specs = buildIgSlideSpecs();
+        igDmState.specs = specs;
+
+        // UI Labels
+        const countLabel = document.getElementById("ig-slides-count-label");
+        if (countLabel) countLabel.textContent = `${specs.length} ${specs.length === 1 ? "Slide" : "Slides"}`;
+
+        const sublabel = document.getElementById("ig-slides-sublabel");
+        if (sublabel) {
+          sublabel.textContent =
+            igDmState.look === "full"
+              ? "1318 × 2346 PNGs, the size of the original post. Free, no credits."
+              : "828 wide and as tall as the bubbles, like the original. TikTok puts them on black.";
+        }
+
+        // Warnings
+        const warnBox = document.getElementById("ig-warning-box");
+        if (warnBox) {
+          const errs = [];
+          if (igDmState.parsed?.skipped?.length) {
+            errs.push(`Line ${igDmState.parsed.skipped.slice(0, 5).join(", ")} isn't a message. Start with me: or her:.`);
+          }
+          if (igDmState.parsed?.hasStory && !igDmState.storyUrl) {
+            errs.push("Add the story picture below, or delete the story: line.");
+          }
+          if (errs.length > 0) {
+            warnBox.style.display = "block";
+            warnBox.innerHTML = errs.map(e => `<div>⚠️ ${e}</div>`).join("");
+          } else {
+            warnBox.style.display = "none";
+          }
+        }
+
+        // Populate Grid
+        const grid = document.getElementById("ig-output-grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+
+        specs.forEach((spec, idx) => {
+          const card = document.createElement("div");
+          card.className = "slide-card";
+
+          const canvasBox = document.createElement("div");
+          canvasBox.className = "slide-canvas-box";
+
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(spec.width * 0.35);
+          canvas.height = Math.round(spec.height * 0.35);
+          const ctx = canvas.getContext("2d");
+          ctx.scale(canvas.width / spec.width, canvas.height / spec.height);
+          spec.draw(ctx);
+
+          canvasBox.appendChild(canvas);
+
+          const footer = document.createElement("div");
+          footer.className = "slide-card-footer";
+          footer.innerHTML = `
+            <span class="slide-badge">Slide ${idx + 1}</span>
+            <button type="button" class="btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="downloadSingleIgSlide(${idx})">
+              Download PNG
+            </button>
+          `;
+
+          card.appendChild(canvasBox);
+          card.appendChild(footer);
+          grid.appendChild(card);
+        });
+      }
+
+      function setIgLook(mode) {
+        igDmState.look = mode;
+        document.getElementById("btn-ig-look-full").classList.toggle("active", mode === "full");
+        document.getElementById("btn-ig-look-closeup").classList.toggle("active", mode === "closeup");
+        const desc = document.getElementById("ig-look-desc");
+        if (desc) {
+          desc.textContent =
+            mode === "full"
+              ? "One beat per slide, centred on a black 9:16 frame (1318 × 2346 PNGs)."
+              : "Cropped tight to the new bubbles, like a zoomed-in phone screenshot (828px wide).";
+        }
+        renderIgDmSlides();
+      }
+
+      function addIgSlideDelimiter() {
+        const textarea = document.getElementById("ig-chat-script");
+        if (!textarea) return;
+        const text = textarea.value;
+        const pos = textarea.selectionEnd || text.length;
+        const before = text.slice(0, pos).replace(/\s+$/, "");
+        const after = text.slice(pos).replace(/^\s+/, "");
+        textarea.value = `${before}\n---\n${after}`;
+        renderIgDmSlides();
+        requestAnimationFrame(() => {
+          textarea.focus();
+          const next = before.length + 5;
+          textarea.setSelectionRange(next, next);
+        });
+      }
+
+      function loadNextIgExample() {
+        igDmState.exampleIdx = (igDmState.exampleIdx + 1) % IG_EXAMPLES.length;
+        const ex = IG_EXAMPLES[igDmState.exampleIdx];
+        igDmState.look = ex.look;
+        igDmState.storyUrl = ex.story;
+        igDmState.script = ex.script;
+
+        const textarea = document.getElementById("ig-chat-script");
+        if (textarea) textarea.value = ex.script;
+
+        const thumb = document.getElementById("ig-story-thumb");
+        if (thumb) {
+          thumb.style.display = ex.story ? "block" : "none";
+          if (ex.story) thumb.src = ex.story;
+        }
+
+        setIgLook(ex.look);
+        loadIgStoryImage(ex.story);
+      }
+
+      function resetIgDm() {
+        igDmState.exampleIdx = 0;
+        const ex = IG_EXAMPLES[0];
+        igDmState.look = ex.look;
+        igDmState.storyUrl = ex.story;
+        igDmState.script = ex.script;
+
+        const textarea = document.getElementById("ig-chat-script");
+        if (textarea) textarea.value = ex.script;
+
+        const thumb = document.getElementById("ig-story-thumb");
+        if (thumb) {
+          thumb.style.display = "block";
+          thumb.src = ex.story;
+        }
+
+        setIgLook("full");
+        loadIgStoryImage(ex.story);
+      }
+
+      function handleIgStoryUpload(e) {
+        const file = e.target.files?.[0];
+        if (file) {
+          const url = URL.createObjectURL(file);
+          igDmState.storyUrl = url;
+          const thumb = document.getElementById("ig-story-thumb");
+          if (thumb) {
+            thumb.style.display = "block";
+            thumb.src = url;
+          }
+          const textarea = document.getElementById("ig-chat-script");
+          if (textarea && !textarea.value.includes("story:")) {
+            textarea.value = `story:\n${textarea.value}`;
+          }
+          loadIgStoryImage(url);
+        }
+      }
+
+      function removeIgStoryPicture() {
+        igDmState.storyUrl = null;
+        igDmState.storyImage = null;
+        const thumb = document.getElementById("ig-story-thumb");
+        if (thumb) thumb.style.display = "none";
+        renderIgDmSlides();
+      }
+
+      function downloadSingleIgSlide(idx) {
+        const spec = igDmState.specs[idx];
+        if (!spec) return;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = spec.width;
+        canvas.height = spec.height;
+        const ctx = canvas.getContext("2d");
+        spec.draw(ctx);
+
+        canvas.toBlob(blob => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `instagram-dm-${String(idx + 1).padStart(2, "0")}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }, "image/png");
+      }
+
+      async function downloadAllIgSlides() {
+        if (!window.JSZip) {
+          alert("JSZip library loading, please try again in a moment.");
+          return;
+        }
+        if (!igDmState.specs.length) {
+          alert("Please enter a script to generate slides.");
+          return;
+        }
+
+        const btnLabel = document.getElementById("ig-download-label");
+        if (btnLabel) btnLabel.textContent = "Packing ZIP...";
+
+        try {
+          const zip = new JSZip();
+          for (let i = 0; i < igDmState.specs.length; i++) {
+            const spec = igDmState.specs[i];
+            const canvas = document.createElement("canvas");
+            canvas.width = spec.width;
+            canvas.height = spec.height;
+            const ctx = canvas.getContext("2d");
+            spec.draw(ctx);
+
+            const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
+            const arrayBuf = await blob.arrayBuffer();
+            zip.file(`instagram-dm-${String(i + 1).padStart(2, "0")}.png`, arrayBuf);
+          }
+
+          const zipBlob = await zip.generateAsync({ type: "blob" });
+          const url = URL.createObjectURL(zipBlob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `instagram-dm-slideshow-${Date.now()}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        } catch (err) {
+          console.error(err);
+          alert("Could not create ZIP. Try downloading slides individually.");
+        } finally {
+          if (btnLabel) btnLabel.textContent = "Download All Slides (.ZIP)";
+        }
+      }
+
+      // ==========================================
       // INITIALIZATION
       // ==========================================
       window.addEventListener('DOMContentLoaded', () => {
         renderMessageControls();
         renderMockup();
+
+        // Check if user requested the IG-Dm tab directly via URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'igdm' || window.location.pathname.includes('instagram-dm')) {
+          switchTab('igdm');
+        } else {
+          // Pre-load story image in background
+          loadIgStoryImage(igDmState.storyUrl);
+        }
       });
     </script>
   </body>

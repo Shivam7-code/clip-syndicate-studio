@@ -246,6 +246,9 @@ export async function handleRequest(req, res) {
     '/promo.html': 'promo.html',
     '/dm-studio': 'promo.html',
     '/dm-studio.html': 'promo.html',
+    '/ig-dm': 'promo.html',
+    '/igdm': 'promo.html',
+    '/promo/instagram-dm': 'promo.html',
   };
 
   if (pathname in protectedPages) {
@@ -282,7 +285,8 @@ export async function handleRequest(req, res) {
 const server = http.createServer(handleRequest);
 export default handleRequest;
 
-if (!process.env.VERCEL) {
+const isMainModule = Boolean(process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename));
+if (isMainModule && !process.env.VERCEL) {
   server.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`  Clip Syndicate Local Server is running!`);
