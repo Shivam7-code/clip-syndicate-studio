@@ -253,6 +253,10 @@ export function wrapText(text, maxWidth, cfg) {
 }
 
 export function roundRect(ctx, x, y, width, height, radii) {
+  if (typeof ctx.roundRect === "function") {
+    ctx.roundRect(x, y, width, height, radii);
+    return;
+  }
   const [tl, tr, br, bl] =
     typeof radii === "number" ? [radii, radii, radii, radii] : radii;
   ctx.moveTo(x + tl, y);

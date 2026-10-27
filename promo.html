@@ -1826,17 +1826,19 @@ me: okay that's actually really sweet 😭`
         }, 'image/png');
       }
 
-      function roundRect(ctx, x, y, width, height, radius) {
+      function roundRect(ctx, x, y, width, height, radii) {
         ctx.beginPath();
-        ctx.moveTo(x + radius, y);
-        ctx.lineTo(x + width - radius, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-        ctx.lineTo(x + width, y + height - radius);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-        ctx.lineTo(x + radius, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-        ctx.lineTo(x, y + radius);
-        ctx.quadraticCurveTo(x, y, x + radius, y);
+        if (typeof ctx.roundRect === 'function') {
+          ctx.roundRect(x, y, width, height, radii);
+          return;
+        }
+        const [tl, tr, br, bl] =
+          typeof radii === 'number' ? [radii, radii, radii, radii] : radii;
+        ctx.moveTo(x + tl, y);
+        ctx.arcTo(x + width, y, x + width, y + height, tr);
+        ctx.arcTo(x + width, y + height, x, y + height, br);
+        ctx.arcTo(x, y + height, x, y, bl);
+        ctx.arcTo(x, y, x + width, y, tl);
         ctx.closePath();
       }
 
@@ -2379,7 +2381,7 @@ me: saturday's canceled.`
             bottom: topY + bubbleH,
             paint(ctx) {
               ctx.beginPath();
-              roundRect(ctx, bubbleX, topY, bubbleW, bubbleH, radii[0]);
+              roundRect(ctx, bubbleX, topY, bubbleW, bubbleH, radii);
               if (isMe) {
                 const grad = ctx.createLinearGradient(0, 400, 0, 1900);
                 grad.addColorStop(0, "rgb(114, 58, 243)");
